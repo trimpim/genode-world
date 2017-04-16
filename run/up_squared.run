@@ -1,0 +1,130 @@
+#
+# run script to start a UP2 board
+#
+
+# source the platform driver config
+source ${genode_dir}/repos/base/run/platform_drv.inc
+
+set build_components {
+	drivers/input
+	drivers/usb
+	drivers/rtc
+	drivers/nic
+	drivers/timer
+	drivers/framebuffer
+	server/log_terminal
+	virtualbox
+}
+
+append_platform_drv_build_components
+
+# override defaults of platform_drv.inc
+proc platform_drv_priority {} { return { priority="-1"} }
+
+build $build_components
+
+create_boot_directory
+
+set boot_modules {
+	core
+	init
+	ld.lib.so
+	libc.lib.so
+	libm.lib.so
+	stdcxx.lib.so
+	pthread.lib.so
+	libc_pipe.lib.so
+	libc_terminal.lib.so
+	libiconv.lib.so
+	qemu-usb.lib.so
+	nic_drv
+	virtualbox-nova
+}
+
+append_platform_drv_boot_modules
+
+set config {
+<config prio_levels="4">
+	<parent-provides>
+		<service name="ROM"/>
+		<service name="RAM"/>
+		<service name="IRQ"/>
+		<service name="IO_MEM"/>
+		<service name="IO_PORT"/>
+		<service name="PD"/>
+		<service name="RM"/>
+		<service name="CPU"/>
+		<service name="LOG"/>
+	</parent-provides>
+	<start name="timer">
+		<resource name="RAM" quantum="2M"/>
+		<provides><service name="Timer"/></provides>
+		<route>
+			<service name="CPU"> <parent/> </service>
+			<service name="ROM"> <parent/> </service>
+			<service name="RAM"> <parent/> </service>
+		</route>
+	</start>
+}
+
+append_platform_drv_config
+
+append config {
+	<start name="rtc_drv" priority="-1">
+		<resource name="RAM" quantum="2M"/>
+		<provides>
+			<service name="Rtc"/>
+		</provides>
+		<route>
+			<service name="CPU"> <parent/> </service>
+			<service name="ROM"> <parent/> </service>
+			<service name="RAM"> <parent/> </service>
+		</route>
+	</start>
+	<start name="nic_drv" priority="-1">
+		<resource name="RAM" quantum="4M"/>
+		<provides><service name="Nic"/></provides>
+		<route>
+			<service name="CPU"> <parent/> </service>
+			<service name="ROM"> <parent/> </service>
+			<service name="RAM"> <parent/> </service>
+		</route>
+	</start>
+	<start name="ps2_drv" priority="-1">
+		<resource name="RAM" quantum="2M"/>
+		<provides><service name="Input"/></provides>
+		<route>
+			<service name="CPU"> <parent/> </service>
+			<service name="ROM"> <parent/> </service>
+			<service name="RAM"> <parent/> </service>
+		</route>
+	</start>
+	<start name="usb_drv" priority="-1">
+		<resource name="RAM" quantum="7M"/>
+		<provides><service name="Input"/></provides>
+		<config uhci="yes" ehci="yes" xhci="yes">
+			<hid/>
+		</config>
+		<route>
+			<service name="CPU"> <parent/> </service>
+			<service name="ROM"> <parent/> </service>
+			<service name="RAM"> <parent/> </service>
+		</route>
+	</start>
+	<start name="fb_drv" priority="-1">
+		<resource name="RAM" quantum="4M"/>
+		<provides><service name="Framebuffer"/></provides>
+		<route>
+			<service name="CPU"> <parent/> </service>
+			<service name="ROM"> <parent/> </service>
+			<service name="RAM"> <parent/> </service>
+		</route>
+	</start>
+</config>
+}
+
+install_config $config
+
+build_boot_image $boot_modules
+
+run_genode_until forever
