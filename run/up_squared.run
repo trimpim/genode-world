@@ -6,15 +6,32 @@
 source ${genode_dir}/repos/base/run/platform_drv.inc
 
 set build_components {
+	app/decorator
+	app/floating_window_layouter
+	app/pointer
 	drivers/input
 	drivers/usb
 	drivers/rtc
 	drivers/nic
 	drivers/timer
 	drivers/framebuffer
+	noux/minimal
+	server/input_filter
 	server/log_terminal
-	virtualbox
+	server/nitpicker
+	server/nit_fb
+	server/ram_fs
+	server/terminal
+	server/wm
+	server/xoroshiro_terminal
+	virtualbox5
 }
+
+#
+# Build Noux packages only once
+#
+foreach pkg {bash coreutils vim diffutils} {
+	lappend_if [expr ![file exists bin/$pkg]] build_components noux-pkg/$pkg }
 
 append_platform_drv_build_components
 
@@ -23,28 +40,62 @@ proc platform_drv_priority {} { return { priority="-1"} }
 
 build $build_components
 
+# write default vimrc file
+set vimrc_fd [open "bin/vimrc" w]
+puts $vimrc_fd {
+set noloadplugins
+set hls
+set nocompatible
+set laststatus=2
+set noswapfile
+set viminfo=}
+close $vimrc_fd
+
 create_boot_directory
 
 set boot_modules {
+	bash.tar
 	core
+	decorator
+	fb_drv
+	floating_window_layouter
 	init
+	input_filter
 	ld.lib.so
 	libc.lib.so
+	libc_noux.lib.so
 	libm.lib.so
-	stdcxx.lib.so
-	pthread.lib.so
 	libc_pipe.lib.so
 	libc_terminal.lib.so
 	libiconv.lib.so
-	qemu-usb.lib.so
 	nic_drv
-	virtualbox-nova
+	nitpicker
+	nit_fb
+	noux
+	qemu-usb.lib.so
+	pointer
+	posix.lib.so
+	pthread.lib.so
+	stdcxx.lib.so
+	ps2_drv
+	ram_fs
+	report_rom
+	rtc_drv
+	terminal
+	timer
+	usb_drv
+	vim.tar
+	vimrc
+	virtualbox5-nova
+	wm
+	xoroshiro_terminal
 }
 
 append_platform_drv_boot_modules
 
 set config {
 <config prio_levels="4">
+
 	<parent-provides>
 		<service name="ROM"/>
 		<service name="RAM"/>
@@ -56,70 +107,333 @@ set config {
 		<service name="CPU"/>
 		<service name="LOG"/>
 	</parent-provides>
-	<start name="timer">
-		<resource name="RAM" quantum="2M"/>
-		<provides><service name="Timer"/></provides>
-		<route>
-			<service name="CPU"> <parent/> </service>
-			<service name="ROM"> <parent/> </service>
-			<service name="RAM"> <parent/> </service>
-		</route>
-	</start>
+
+	<resource name="RAM" preserve="8M"/>
+	<default caps="100"/>
+
 }
 
 append_platform_drv_config
 
 append config {
-	<start name="rtc_drv" priority="-1">
+
+	<start name="timer" priority="-1" caps="100">
 		<resource name="RAM" quantum="2M"/>
-		<provides>
-			<service name="Rtc"/>
-		</provides>
+		<provides> <service name="Timer"/> </provides>
 		<route>
+			<service name="PD"> <parent/> </service>
+			<service name="RM"> <parent/> </service>
 			<service name="CPU"> <parent/> </service>
 			<service name="ROM"> <parent/> </service>
-			<service name="RAM"> <parent/> </service>
+			<service name="LOG"> <parent/> </service>
 		</route>
 	</start>
-	<start name="nic_drv" priority="-1">
+
+	<start name="rtc_drv" priority="-1" caps="100">
+		<resource name="RAM" quantum="2M"/>
+		<provides> <service name="Rtc"/> </provides>
+		<route>
+			<service name="IO_PORT"> <parent/> </service>
+			<service name="PD"> <parent/> </service>
+			<service name="RM"> <parent/> </service>
+			<service name="CPU"> <parent/> </service>
+			<service name="ROM"> <parent/> </service>
+			<service name="LOG"> <parent/> </service>
+		</route>
+	</start>
+
+	<start name="nic_drv" priority="-1" caps="100">
 		<resource name="RAM" quantum="4M"/>
-		<provides><service name="Nic"/></provides>
+		<provides> <service name="Nic"/> </provides>
 		<route>
+			<service name="Platform"> <child name="platform_drv"/> </service>
+			<service name="Timer"> <child name="timer"/> </service>
+			<service name="PD"> <parent/> </service>
+			<service name="RM"> <parent/> </service>
 			<service name="CPU"> <parent/> </service>
 			<service name="ROM"> <parent/> </service>
-			<service name="RAM"> <parent/> </service>
+			<service name="LOG"> <parent/> </service>
 		</route>
 	</start>
-	<start name="ps2_drv" priority="-1">
+
+	<start name="ps2_drv" priority="-1" caps="100">
 		<resource name="RAM" quantum="2M"/>
-		<provides><service name="Input"/></provides>
+		<provides> <service name="Input"/> </provides>
 		<route>
+			<service name="Platform"> <child name="platform_drv"/> </service>
+			<service name="PD"> <parent/> </service>
+			<service name="RM"> <parent/> </service>
 			<service name="CPU"> <parent/> </service>
 			<service name="ROM"> <parent/> </service>
-			<service name="RAM"> <parent/> </service>
+			<service name="LOG"> <parent/> </service>
 		</route>
 	</start>
-	<start name="usb_drv" priority="-1">
-		<resource name="RAM" quantum="7M"/>
-		<provides><service name="Input"/></provides>
+
+	<start name="usb_drv" priority="-1" caps="100">
+		<resource name="RAM" quantum="12M"/>
+		<provides>
+			<service name="Input"/>
+			<service name="Usb"/>
+		</provides>
 		<config uhci="yes" ehci="yes" xhci="yes">
 			<hid/>
+			<raw/>
 		</config>
 		<route>
+			<service name="Platform"> <child name="platform_drv"/> </service>
+			<service name="Timer"> <child name="timer"/> </service>
+			<service name="PD"> <parent/> </service>
+			<service name="RM"> <parent/> </service>
 			<service name="CPU"> <parent/> </service>
 			<service name="ROM"> <parent/> </service>
-			<service name="RAM"> <parent/> </service>
+			<service name="LOG"> <parent/> </service>
 		</route>
 	</start>
-	<start name="fb_drv" priority="-1">
+
+	<start name="fb_drv" priority="-1" caps="200">
 		<resource name="RAM" quantum="4M"/>
-		<provides><service name="Framebuffer"/></provides>
+		<provides> <service name="Framebuffer"/> </provides>
 		<route>
+			<service name="ROM" unscoped_label="ld.lib.so"> <parent label="ld.lib.so"/> </service>
+			<service name="ROM" unscoped_label="fb_drv"> <parent label="fb_drv"/> </service>
+			<service name="Platform"> <child name="platform_drv"/> </service>
+			<service name="Timer"> <child name="timer"/> </service>
+			<service name="IO_PORT"> <parent/> </service>
+			<service name="IO_MEM"> <parent/> </service>
+			<service name="PD"> <parent/> </service>
 			<service name="CPU"> <parent/> </service>
 			<service name="ROM"> <parent/> </service>
-			<service name="RAM"> <parent/> </service>
+			<service name="LOG"> <parent/> </service>
 		</route>
 	</start>
+
+	<start name="nitpicker" priority="-1" caps="100">
+		<resource name="RAM" quantum="2M"/>
+		<provides> <service name="Nitpicker"/> </provides>
+		<config>
+			<report focus="yes"/>
+			<domain name="pointer" layer="1" label="no" content="client" origin="pointer" />
+			<domain name="default" layer="2" label="no" content="client" focus="click" hover="always" />
+			<policy label_prefix="pointer" domain="pointer"/>
+			<default-policy domain="default"/>
+		</config>
+		<route>
+			<service name="Framebuffer"> <child name="fb_drv"/> </service>
+			<service name="Input">  <child name="usb_drv"/> </service>
+			<service name="Report"> <child name="report_rom"/> </service>
+			<service name="Timer"> <child name="timer"/> </service>
+			<service name="PD"> <parent/> </service>
+			<service name="RM"> <parent/> </service>
+			<service name="CPU"> <parent/> </service>
+			<service name="ROM"> <parent/> </service>
+			<service name="LOG"> <parent/> </service>
+		</route>
+	</start>
+
+	<start name="nit_fb_terminal" priority="-1">
+		<binary name="nit_fb"/>
+		<resource name="RAM" quantum="8M"/>
+		<provides>
+			<service name="Framebuffer"/>
+			<service name="Input"/>
+		</provides>
+		<config xpos="10" ypos="10" width="800" height="600"/>
+		<route>
+			<service name="Nitpicker"> <child name="nitpicker"/> </service>
+			<service name="Input"> <child name="ps2_drv"/> </service>
+			<service name="PD"> <parent/> </service>
+			<service name="RM"> <parent/> </service>
+			<service name="CPU"> <parent/> </service>
+			<service name="ROM"> <parent/> </service>
+			<service name="LOG"> <parent/> </service>
+		</route>
+	</start>
+
+	<start name="report_rom" priority="-1" caps="100">
+		<resource name="RAM" quantum="4M"/>
+		<provides>
+			<service name="Report"/>
+			<service name="ROM"/>
+		</provides>
+		<config>
+			<policy label="layouter -> window_list" report="wm -> window_list"/>
+			<policy label="layouter -> focus_request" report="wm -> focus_request"/>
+			<policy label="decorator -> window_layout" report="layouter -> window_layout"/>
+			<policy label="wm -> resize_request" report="layouter -> resize_request"/>
+			<policy label="decorator -> pointer" report="wm -> pointer"/>
+			<policy label="layouter -> hover" report="decorator -> hover"/>
+			<policy label="wm -> focus" report="layouter -> focus"/>
+			<policy label="clipboard -> focus" report="nitpicker -> focus"/>
+			<policy label="layouter -> decorator_margins" report="decorator -> decorator_margins"/>
+		</config>
+		<route>
+			<!-- <service name="Nitpicker"> <child name="nitpicker"/> </service> -->
+			<service name="PD"> <parent/> </service>
+			<service name="RM"> <parent/> </service>
+			<service name="CPU"> <parent/> </service>
+			<service name="ROM"> <parent/> </service>
+			<service name="LOG"> <parent/> </service>
+		</route>
+	</start>
+<!--
+	<start name="wm" priority="-1" caps="150">
+		<resource name="RAM" quantum="12M"/>
+		<provides> <service name="Nitpicker"/> </provides>
+		<config>
+			<policy label_prefix="decorator" role="decorator"/>
+			<policy label_prefix="layouter"  role="layouter"/>
+		</config>
+		<route>
+			<service name="ROM" label="focus"> <child name="report_rom"/> </service>
+			<service name="ROM" label="resize_request"> <child name="report_rom"/> </service>
+			<service name="Report"> <child name="report_rom"/> </service>
+			<service name="Nitpicker"> <child name="nitpicker"/> </service>
+			<service name="PD"> <parent/> </service>
+			<service name="RM"> <parent/> </service>
+			<service name="CPU"> <parent/> </service>
+			<service name="ROM"> <parent/> </service>
+			<service name="LOG"> <parent/> </service>
+		</route>
+	</start>
+-->
+	<start name="pointer" priority="-1" caps="100">
+		<resource name="RAM" quantum="1M"/>
+		<route>
+			<service name="Nitpicker"> <child name="nitpicker"/> </service>
+			<service name="PD"> <parent/> </service>
+			<service name="RM"> <parent/> </service>
+			<service name="CPU"> <parent/> </service>
+			<service name="ROM"> <parent/> </service>
+			<service name="LOG"> <parent/> </service>
+		</route>
+	</start>
+<!--
+	<start name="layouter" priority="-1" caps="100">
+		<binary name="floating_window_layouter"/>
+		<resource name="RAM" quantum="4M"/>
+		<route>
+			<service name="ROM" label="window_list"> <child name="report_rom"/> </service>
+			<service name="ROM" label="focus_request"> <child name="report_rom"/> </service>
+			<service name="ROM" label="hover"> <child name="report_rom"/> </service>
+			<service name="ROM" label="decorator_margins"> <child name="report_rom"/> </service>
+			<service name="Report"> <child name="report_rom"/> </service>
+			<service name="Nitpicker"> <child name="nitpicker"/> </service>
+			<service name="PD"> <parent/> </service>
+			<service name="RM"> <parent/> </service>
+			<service name="CPU"> <parent/> </service>
+			<service name="ROM"> <parent/> </service>
+			<service name="LOG"> <parent/> </service>
+		</route>
+	</start>
+
+	<start name="decorator" priority="-1" caps="100">
+		<binary name="decorator"/>
+		<resource name="RAM" quantum="12M"/>
+		<route>
+			<service name="ROM" label="window_layout"> <child name="report_rom"/> </service>
+			<service name="ROM" label="pointer"> <child name="report_rom"/> </service>
+			<service name="Report"> <child name="report_rom"/> </service>
+			<service name="Nitpicker"> <child name="nitpicker"/> </service>
+			<service name="PD"> <parent/> </service>
+			<service name="RM"> <parent/> </service>
+			<service name="CPU"> <parent/> </service>
+			<service name="ROM"> <parent/> </service>
+			<service name="LOG"> <parent/> </service>
+		</route>
+	</start>
+-->
+	<start name="ram_fs">
+		<resource name="RAM" quantum="10M"/>
+		<provides><service name="File_system"/></provides>
+		<config>
+			<content>
+				<dir name="home">
+					<inline name=".bashrc">
+					</inline>
+				</dir>
+				<dir name="samples"/>
+				<dir name="tmp"/>
+			</content>
+			<!-- constrain sessions according to their labels -->
+			<policy label_prefix="fs_log" root="/samples" writeable="yes"/>
+			<policy label="noux -> home" root="/home" writeable="yes"/>
+			<policy label="noux -> tmp" root="/tmp" writeable="yes"/>
+		</config>
+		<route>
+			<service name="ROM" unscoped_label="ram_fs"> <parent label="ram_fs"/> </service>
+			<service name="ROM" unscoped_label="ld.lib.so"> <parent label="ld.lib.so"/> </service>
+			<service name="PD"> <parent/> </service>
+			<service name="RM"> <parent/> </service>
+			<service name="CPU"> <parent/> </service>
+			<service name="ROM"> <parent/> </service>
+			<service name="LOG"> <parent/> </service>
+		</route>
+	</start>
+
+	<start name="xoroshiro_terminal" priority="-1">
+		<resource name="RAM" quantum="4M"/>
+		<provides> <service name="Terminal"/> </provides>
+		<config> <seed value="12345678"/> </config>
+		<route>
+			<service name="PD"> <parent/> </service>
+			<service name="RM"> <parent/> </service>
+			<service name="CPU"> <parent/> </service>
+			<service name="ROM"> <parent/> </service>
+			<service name="LOG"> <parent/> </service>
+		</route>
+	</start>
+
+	<start name="terminal">
+		<resource name="RAM" quantum="1M"/>
+		<provides> <service name="Terminal"/> </provides>
+		<route>
+			<service name="Timer"> <child name="timer"/> </service>
+			<service name="Framebuffer"> <child name="nit_fb_terminal"/> </service>
+			<service name="Input"> <child name="nit_fb_terminal"/> </service>
+			<service name="PD"> <parent/> </service>
+			<service name="RM"> <parent/> </service>
+			<service name="CPU"> <parent/> </service>
+			<service name="ROM"> <parent/> </service>
+			<service name="LOG"> <parent/> </service>
+		</route>
+	</start>
+
+	<start name="noux" caps="500">
+		<resource name="RAM" quantum="16M" />
+		<config>
+			<fstab>
+				<tar name="vim.tar"/>
+				<tar name="bash.tar"/>
+				<dir name="dev"> <zero/> <null/> <terminal label="random"/> </dir>
+				<dir name="home"> <fs label="home" /> </dir>
+				<dir name="tmp"> <fs label="tmp" /> </dir>
+				<dir name="share"> <dir name="vim"> <rom name="vimrc"/> </dir> </dir>
+				<dir name="bin"> <symlink name="sh" target="bash"/> </dir>
+			</fstab>
+			<start name="/bin/bash">
+				<env name="TERM" value="linux"/>
+				<env name="HOME" value="/home"/>
+				<env name="EDITOR" value="vim"/>
+			</start>
+		</config>
+		<route>
+			<service name="ROM" unscoped_label="noux"> <parent label="noux"/> </service>
+			<service name="ROM" unscoped_label="ld.lib.so"> <parent label="ld.lib.so"/> </service>
+			<service name="ROM" unscoped_label="libc_noux.lib.so"> <parent label="libc_noux.lib.so"/> </service>
+			<service name="ROM" unscoped_label="posix.lib.so"> <parent label="posix.lib.so"/> </service>
+			<service name="ROM" unscoped_label="vimrc"> <parent label="vimrc"/> </service>
+			<service name="Terminal" label="random"> <child name="xoroshiro_terminal"/> </service>
+			<service name="Terminal"> <child name="terminal"/> </service>
+			<service name="Timer"> <child name="timer"/> </service>
+			<service name="File_system"> <child name="ram_fs"/> </service>
+			<service name="PD"> <parent/> </service>
+			<service name="RM"> <parent/> </service>
+			<service name="CPU"> <parent/> </service>
+			<service name="ROM"> <parent/> </service>
+			<service name="LOG"> <parent/> </service>
+		</route>
+	</start>
+
 </config>
 }
 
