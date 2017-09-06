@@ -16,6 +16,7 @@ set build_components {
 	drivers/framebuffer
 	lib/vfs/lxip
 	server/ram_fs
+	server/terminal_log
 	server/usb_terminal
 	server/vfs
 }
@@ -42,6 +43,7 @@ set boot_modules {
 	ram_fs
 	report_rom
 	rtc_drv
+	terminal_log
 	timer
 	usb_drv
 	usb_terminal
@@ -66,7 +68,7 @@ set config {
 		<service name="LOG"/>
 	</parent-provides>
 
-	<resource name="RAM" preserve="8M"/>
+	<resource name="RAM" preserve="16M"/>
 	<default caps="100"/>
 
 }
@@ -169,10 +171,43 @@ append config {
 		</route>
 	</start>
 
-	<start name="usb_terminal">
+	<start name="usb_terminal" caps="150">
 		<resource name="RAM" quantum="4M"/>
-		<provides><service name="Terminal"/></provides>
+		<provides> <service name="Terminal"/> </provides>
 		<route>
+			<any-service> <parent/> <any-child/> </any-service>
+		</route>
+	</start>
+
+	<start name="terminal_log" caps="150">
+		<resource name="RAM" quantum="4M"/>
+		<provides> <service name="LOG"/> </provides>
+		<route>
+			<service name="terminal"> <child name="usb_terminal"/> </service>
+			<any-service> <parent/> <any-child/> </any-service>
+		</route>
+	</start>
+
+	<start name="report_rom" caps="100">
+		<resource name="RAM" quantum="4M"/>
+		<provides>
+			<service name="ROM"/>
+			<service name="Report"/>
+		</provides>
+		<config>
+			<policy label="starter.config" report="start_creater"/>
+		</config>
+		<route>
+			<any-service> <parent/> <any-child/> </any-service>
+		</route>
+	</start>
+
+	<start name="starter" caps="1500">
+		<binary name="init"/>
+		<resource name="RAM" quantum="4M"/>
+		<configfile name="starter.config"/>
+		<route>
+			<service name="ROM" label="starter.config"> <child name="report_rom" label="starter.config"/> </service>
 			<any-service> <parent/> <any-child/> </any-service>
 		</route>
 	</start>
