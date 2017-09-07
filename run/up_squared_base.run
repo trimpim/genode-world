@@ -15,6 +15,7 @@ set build_components {
 	drivers/timer
 	drivers/framebuffer
 	lib/vfs/lxip
+	server/fs_rom
 	server/ram_fs
 	server/terminal_log
 	server/usb_terminal
@@ -33,10 +34,10 @@ create_boot_directory
 set boot_modules {
 	core
 	fb_drv
+	fs_rom
 	init
 	ld.lib.so
 	libc.lib.so
-	libc_noux.lib.so
 	libm.lib.so
 	lxip.lib.so
 	nic_drv
@@ -188,16 +189,29 @@ append config {
 		</route>
 	</start>
 
-	<start name="report_rom" caps="100">
+	<start name="ram_fs" priority="-1" caps="100">
 		<resource name="RAM" quantum="4M"/>
-		<provides>
-			<service name="ROM"/>
-			<service name="Report"/>
-		</provides>
-		<config>
-			<policy label="starter.config" report="start_creater"/>
+		<provides> <service name="File_system"/> </provides>
+		<config verbose="no">
+			<policy label_prefix="configurator" root="/" writeable="yes"/>
+			<policy label_prefix="fs_rom" root="/" writeable="no"/>
+			<content>
+				<inline name="starter.config">
+					<config/>
+				</inline>
+			</content>
 		</config>
 		<route>
+			<any-service> <parent/> <any-child/> </any-service>
+		</route>
+	</start>
+
+	<start name="fs_rom" priority="-1" caps="100">
+		<resource name="RAM" quantum="4M"/>
+		<provides> <service name="ROM"/> </provides>
+		<config/>
+		<route>
+			<service name="File_system"> <child name="ram_fs"/> </service>
 			<any-service> <parent/> <any-child/> </any-service>
 		</route>
 	</start>
@@ -207,7 +221,7 @@ append config {
 		<resource name="RAM" quantum="4M"/>
 		<configfile name="starter.config"/>
 		<route>
-			<service name="ROM" label="starter.config"> <child name="report_rom" label="starter.config"/> </service>
+			<service name="ROM" label="starter.config"> <child name="fs_rom"/> </service>
 			<any-service> <parent/> <any-child/> </any-service>
 		</route>
 	</start>
