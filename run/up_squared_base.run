@@ -15,13 +15,15 @@ set build_components {
 	drivers/rtc
 	drivers/nic
 	drivers/timer
-	drivers/framebuffer
+	drivers/framebuffer/intel
 	lib/vfs/lxip
+	proxy/remote_rom/backend/nic_ip/client
 	server/fs_rom
 	server/ram_fs
 	server/terminal_log
 	server/usb_terminal
 	server/vfs
+	test/framebuffer
 	test/log
 }
 
@@ -39,10 +41,13 @@ set boot_modules {
 	fb_drv
 	fs_rom
 	init
+	intel_fb_controller
+	intel_fb_drv
 	ld.lib.so
 	lxip.lib.so
 	nic_drv
 	ram_fs
+	remote_rom_client
 	report_rom
 	rtc_drv
 	terminal_log
@@ -146,38 +151,70 @@ append config {
 		</route>
 	</start>
 
-	<start name="fb_drv" priority="-1" caps="200">
-		<resource name="RAM" quantum="4M"/>
-		<provides> <service name="Framebuffer"/> </provides>
+	<start name="intel_fb_drv" caps="200">
+		<resource name="RAM" quantum="20M"/>
+		<provides><service name="Framebuffer"/></provides>
+		<configfile name="fb_drv.config"/>
 		<route>
-			<service name="ROM" unscoped_label="ld.lib.so"> <parent label="ld.lib.so"/> </service>
-			<service name="ROM" unscoped_label="fb_drv"> <parent label="fb_drv"/> </service>
-			<service name="Platform"> <child name="platform_drv"/> </service>
-			<service name="Timer"> <child name="timer"/> </service>
-			<service name="IO_PORT"> <parent/> </service>
-			<service name="IO_MEM"> <parent/> </service>
-			<service name="PD"> <parent/> </service>
-			<service name="CPU"> <parent/> </service>
-			<service name="ROM"> <parent/> </service>
-			<service name="LOG"> <parent/> </service>
+			<service name="ROM" label="fb_drv.config"> <child name="config_rom"/> </service>
+			<service name="Report"> <child name="report_rom"/> </service>
+			<any-service> <parent/> <any-child /> </any-service>
 		</route>
 	</start>
-<!--
-	<start name="socket_fs" caps="200">
-		<binary name="vfs"/>
-		<resource name="RAM" quantum="32M"/>
-		<provides> <service name="File_system"/> </provides>
-			<config>
-				<vfs>
-					<lxip dhcp="yes"/>
-				</vfs>
-			</config>
+
+	<start name="intel_fb_controller" priority="-1">
+		<resource name="RAM" quantum="1M"/>
 		<route>
-			<service name="ROM" label="socket_fs.config"> <child name="dynamic_rom"/> </service>
+			<service name="File_system">            <child name="config_fs"/> </service>
+			<service name="ROM" label="connectors"> <child name="report_rom"/> </service>
 			<any-service> <parent/> <any-child/> </any-service>
 		</route>
 	</start>
--->
+
+	<start name="report_rom" priority="-1">
+		<resource name="RAM" quantum="2M"/>
+		<provides> <service name="Report" /> <service name="ROM" /> </provides>
+		<config verbose="yes">
+			<policy label="intel_fb_controller -> connectors" report="intel_fb_drv -> connectors"/>
+		</config>
+		<route>
+			<any-service> <parent/> <any-child/> </any-service>
+		</route>
+	</start>
+
+	<start name="config_fs" priority="-1">
+		<binary name="ram_fs"/>
+		<resource name="RAM" quantum="8M"/>
+		<provides> <service name="File_system"/> </provides>
+		<config>
+			<content>
+				<inline name="fb_drv.config">
+					<config>
+						<report connectors="yes"/>
+					</config>
+				</inline>
+			</content>
+			<policy label_prefix="config_rom" root="/"/>
+			<policy label_prefix="intel_fb_controller" root="/" writeable="yes"/>
+		</config>
+		<route>
+			<any-service> <parent/> <any-child/> </any-service>
+		</route>
+	</start>
+
+	<start name="config_rom" priority="-1">
+		<binary name="fs_rom"/>
+		<resource name="RAM" quantum="4M"/>
+		<provides><service name="ROM"/></provides>
+		<route>
+			<service name="File_system"> <child name="config_fs" /> </service>
+			<any-service> <parent/> <any-child/> </any-service>
+		</route>
+		<route>
+			<any-service> <parent/> <any-child/> </any-service>
+		</route>
+	</start>
+
 	<start name="usb_terminal" caps="150">
 		<resource name="RAM" quantum="4M"/>
 		<provides> <service name="Terminal"/> </provides>
@@ -195,37 +232,23 @@ append config {
 		</route>
 	</start>
 
-	<start name="ram_fs" priority="-1" caps="100">
-		<resource name="RAM" quantum="4M"/>
-		<provides> <service name="File_system"/> </provides>
-		<config verbose="no">
-			<policy label_prefix="configurator" root="/" writeable="yes"/>
-			<policy label_prefix="fs_rom" root="/" writeable="no"/>
-			<content>
-				<inline name="starter.config">
-					<config/>
-				</inline>
-			</content>
+	<start name="remote_rom_client">
+		<resource name="RAM" quantum="8M"/>
+		<provides><service name="ROM"/></provides>
+		<config>
+			<remote_rom name="remote" src="10.10.44.150" dst="10.10.44.15" />
 		</config>
 		<route>
+			<service name="terminal"> <child name="usb_terminal"/> </service>
 			<any-service> <parent/> <any-child/> </any-service>
 		</route>
 	</start>
-<!--
-	<start name="fs_rom" priority="-1" caps="100">
-		<resource name="RAM" quantum="4M"/>
-		<provides> <service name="ROM"/> </provides>
-		<config/>
-		<route>
-			<service name="File_system"> <child name="ram_fs"/> </service>
-			<any-service> <parent/> <any-child/> </any-service>
-		</route>
-	</start>
--->
+
 	<start name="starter" caps="1500">
 		<binary name="init"/>
 		<resource name="RAM" quantum="500M"/>
-		<!-- <configfile name="starter.config"/> -->
+		<configfile name="starter.config"/>
+		<!--
 		<config>
 			<parent-provides>
 				<service name="ROM"/>
@@ -252,8 +275,9 @@ append config {
 				</route>
 			</start>
 		</config>
+		-->
 		<route>
-			<!-- <service name="ROM" label="starter.config"> <child name="fs_rom"/> </service> -->
+			<service name="ROM" label="starter.config"> <child name="remote_rom_client"/> </service>
 			<service name="LOG"> <child name="terminal_log"/> </service>
 			<any-service> <parent/> <any-child/> </any-service>
 		</route>
