@@ -17,4 +17,7 @@ vpath addressbook.proto  $(PROTOBUF_DIR)/examples
 $(SRC_CC): addressbook.pb.h
 
 addressbook.pb.h: addressbook.proto
-	$(VERBOSE)$(PROTOC) --proto_path=$(PROTOBUF_DIR)/examples/ --cpp_out=. $<
+	$(VERBOSE)$(PROTOC) --proto_path=$(PROTOBUF_DIR)/examples \
+	                    --proto_path=$(PROTO_FILES_DIR) \
+	                    --cpp_out=$(shell pwd) \
+	                    $<
