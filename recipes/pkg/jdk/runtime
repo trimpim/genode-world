@@ -21,6 +21,7 @@
 		<rom label="management.lib.so"/>
 		<rom label="nio.lib.so"/>
 		<rom label="stdcxx.lib.so"/>
+		<rom label="verify.lib.so"/>
 		<rom label="vfs.lib.so"/>
 		<rom label="tzdb.dat"/>
 		<rom label="zlib.lib.so"/>

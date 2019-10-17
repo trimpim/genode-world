@@ -1,5 +1,6 @@
 LIB_MK_FILES := java.inc jdk_version.inc jimage.mk jli.mk \
                 jnet.mk jvm.inc jzip.mk management.mk nio.mk \
+                verify.mk \
                $(foreach SPEC,x86_64 arm, \
                 spec/$(SPEC)/java.mk spec/$(SPEC)/jvm.mk) \
 
