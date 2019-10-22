@@ -1,0 +1,126 @@
+
+source $gapfruit_dir/repos/gapfruit/run/corallite_functions.inc
+
+
+create_boot_directory
+
+
+import_from_depot [depot_user]/pkg/jdk
+import_from_depot [depot_user]/src/[base_src]
+import_from_depot [depot_user]/src/init
+import_from_depot [depot_user]/src/libc
+import_from_depot [depot_user]/src/posix
+import_from_depot [depot_user]/src/stdcxx
+import_from_depot [depot_user]/src/vfs
+import_from_depot [depot_user]/src/zlib
+
+set config {
+<config verbose="no">
+	<parent-provides>
+		<service name="CPU"/>
+		<service name="LOG"/>
+		<service name="PD"/>
+		<service name="RM"/>
+		<service name="ROM"/>
+	</parent-provides>
+
+	<default caps="100"/>
+
+	<default-route>
+		<any-service> <any-child/> <parent/> </any-service>
+	</default-route>
+
+	<resource name="RAM" preserve="4M"/>
+
+	<start name="timer">
+		<resource name="RAM" quantum="2M"/>
+		<provides> <service name="Timer"/> </provides>
+	</start>
+
+	<start name="java" caps="300">
+		<!-- <binary name="test-app_cpp"/> -->
+		<resource name="RAM" quantum="96M"/>
+		<config>
+			<arg value="/bin/java"/>
+			<arg value="-Xint"/>
+			<arg value="-jar"/>
+			<arg value="app.jar"/>
+			<libc stdin="/dev/terminal" stdout="/dev/terminal" stderr="/dev/log" rtc="/dev/rtc"/>
+			<vfs rtc="/dev/rtc">
+				<dir name="dev">
+					<log/><null/><inline name="rtc">2000-01-01 00:00</inline>
+					<terminal label="terminal"/>
+				</dir>
+				<dir name="bin">
+					<rom name="java"/>
+				</dir>
+				<dir name="lib">
+					<rom name="java.lib.so"/>
+					<inline name="jvm.cfg">-server KNOWN
+-client IGNORE
+</inline>
+					<dir name="server">
+						<rom name="jvm.lib.so"/>
+					</dir>
+				</dir>
+				<dir name="modules">
+					<tar name="classes.tar"/>
+				</dir>
+				<tar name="app.tar"/>
+				<rom name="zip.lib.so"/>
+				<rom name="nio.lib.so"/>
+				<rom name="net.lib.so"/>
+			</vfs>
+		</config>
+		<route>
+			<service name="ROM" label="zip.lib.so">
+				<parent label="jzip.lib.so"/>
+			</service>
+			<service name="ROM" label="net.lib.so">
+				<parent label="jnet.lib.so"/>
+			</service>
+			<any-service> <parent/> <any-child/> </any-service>
+		</route>
+	</start>
+
+	<start name="controller">
+		<resource name="RAM" quantum="16M"/>
+		<provides>
+			<service name="Terminal"/>
+		</provides>
+	</start>
+
+</config>
+}
+
+
+install_config [replace_package_template_info $config]
+
+
+build {
+	test/java_stdin/app_cpp
+	test/java_stdin/controller
+}
+
+
+proc absolute_path { path } {
+	return [file normalize $path]
+}
+
+
+exec javac -d [absolute_path bin] [genode_dir]/repos/world/src/test/java_stdin/app_java/app_java.java -source 8 -target 8
+exec jar -c0fe [absolute_path bin/app.jar] app_java -C [absolute_path bin] app_java.class
+exec tar -cf [absolute_path bin/app.tar] -C [absolute_path bin] app.jar
+
+
+build_boot_image {
+	app.tar
+	controller
+	test-app_cpp
+}
+
+
+append qemu_args " -nographic "
+
+
+run_genode_until {.*Test finished} 60
