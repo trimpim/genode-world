@@ -34,6 +34,18 @@ set config {
 		<resource name="RAM" quantum="2M" />
 		<provides> <service name="Timer" /> </provides>
 	</start>
+	<start name="vfs">
+		<resource name="RAM" quantum="40M"/>
+		<provides> <service name="File_system"/> </provides>
+		<config>
+			<vfs>
+				<dir name="modules">
+					<tar name="classes.tar"/>
+				</dir>
+			</vfs>
+			<policy label="java -> modules" root="/modules/" writeable="no"/>
+		</config>
+	</start>
 	<start name="java" caps="300">
 		<resource name="RAM" quantum="96M" />
 		<route>
@@ -73,7 +85,7 @@ set config {
 					</dir>
 				</dir>
 				<dir name="modules">
-					<tar name="classes.tar" />
+					<fs label="modules"/>
 				</dir>
 				<tar name="hello.tar" />
 				<rom name="zip.lib.so" />
