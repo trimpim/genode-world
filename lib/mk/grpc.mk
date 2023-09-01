@@ -20,6 +20,7 @@ CC_CXX_WARN_STRICT :=
 CC_CXX_OPT_STD     := -std=gnu++17
 #CC_OPT             += -DGPR_CUSTOM_SYNC -DHAVE_CONFIG_H
 CC_OPT             += -DHAVE_CONFIG_H -DNDEBUG
+CC_OPT             += -Wno-deprecated-declarations
 
 INC_DIR            += $(GRPC_DIR)
 INC_DIR            += $(GRPC_DIR)/src/core/ext/upb-generated
