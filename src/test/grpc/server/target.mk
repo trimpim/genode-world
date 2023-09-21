@@ -2,9 +2,12 @@ GRPC_DIR           := $(call select_from_ports,protobuf_grpc)/src/lib/grpc
 PROTO_DIR          := $(GRPC_DIR)/examples/protos
 TARGET             := grpc_server
 
+LIBS               += base
+LIBS               += grpc
+LIBS               += libc
+LIBS               += posix
 LIBS               += protobuf
 LIBS               += stdcxx
-LIBS               += grpc
 LIBS               += vfs
 LIBS               += vfs_lwip
 
