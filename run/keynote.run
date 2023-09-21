@@ -43,15 +43,8 @@ install_config $config
 # Boot modules
 #
 
-# generic modules
-set boot_modules {
-	core init
-	test-keynote
-	ld.lib.so libc.lib.so vfs.lib.so keynote.lib.so libm.lib.so libcrypto.lib.so
-}
 
-
-build_boot_image $boot_modules
+build_boot_image [build_artifacts]
 
 
 run_genode_until {.*exited with exit value 0.*} 20
