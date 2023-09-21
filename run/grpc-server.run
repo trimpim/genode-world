@@ -16,6 +16,10 @@
 # ./stress_grpc.sh 10.0.2.55:8899
 
 
+if { ![have_spec linux] } {
+	puts "Run script is not supported on this platform."
+	exit 0
+}
 
 
 create_boot_directory
@@ -32,6 +36,7 @@ import_from_depot [depot_user]/src/report_rom
 import_from_depot [depot_user]/src/stdcxx
 import_from_depot [depot_user]/src/vfs
 import_from_depot [depot_user]/src/vfs_lxip
+import_from_depot [depot_user]/src/vfs_pipe
 import_from_depot [depot_user]/src/zlib
 
 
@@ -72,7 +77,8 @@ append config {
 		<resource name="RAM" quantum="96M"/>
 		<config server_address="0.0.0.0:8899">
 			<arg value="grpc_server"/>
-			<libc stdout="/dev/log" stderr="/dev/log" rtc="/dev/rtc" socket="/dev/socket"/>
+			<libc stdout="/dev/log" stderr="/dev/log" rtc="/dev/rtc"
+			      socket="/dev/socket" pipe="/pipe"/>
 			<vfs>
 				<dir name="dev">
 					<log/> <null/>
@@ -81,6 +87,7 @@ append config {
 						<lxip ip_addr="10.0.3.2" netmask="255.255.255.0" gateway="10.0.3.1"/>
 					</dir>
 				</dir>
+				<dir name="pipe"> <pipe/> </dir>
 			</vfs>
 		</config>
 		<route>
@@ -95,12 +102,12 @@ append config {
 			<service name="Nic"/>
 			<service name="Uplink"/>
 		</provides>
-		<config verbose_domain_state="no"
+		<config verbose_domain_state="yes"
 		        verbose_packets="no"
 		        verbose_packet_drop="no">
 
 			<policy label="grpc2tee -> " domain="server"/>
-			<nic-client                  domain="uplink"/>
+			<policy label="nic_drv -> "  domain="uplink"/>
 
 			<domain name="uplink" interface="10.0.2.55/24" gateway="10.0.2.1">
 				<nat domain="server" tcp-ports="100" />
@@ -115,7 +122,6 @@ append config {
 
 		</config>
 		<route>
-			<service name="Nic"> <child name="nic_drv"/> </service>
 			<any-service> <parent/> <any-child/> </any-service>
 		</route>
 	</start>
@@ -130,6 +136,7 @@ append config {
 			<nic mac="02:00:00:00:00:01" tap="tap0"/>
 		</config>
 		<route>
+			<service name="Uplink"> <child name="nic_router"/> </service>
 			<any-service> <parent/> </any-service>
 		</route>
 	</start>
@@ -141,19 +148,10 @@ append config {
 install_config $config
 
 
-set boot_modules {
-	grpc_server
-	grpc.lib.so
-	libc_pipe.lib.so
-	vfs_lwip.lib.so
-	linux_nic_drv
-}
-
-
 append qemu_args " -nographic "
 
 
-build_boot_image $boot_modules
+build_boot_image [build_artifacts]
 
 
 run_genode_until forever
