@@ -7,27 +7,26 @@ assert_spec x86
 
 set build_components {
 	app/ssh_client
-	drivers/nic
-	lib/vfs_import
-	lib/vfs_lwip
 }
-
-source ${genode_dir}/repos/base/run/platform_drv.inc
-append_platform_drv_build_components
 
 build $build_components
 
 create_boot_directory
 
 import_from_depot \
-	genodelabs/src/[base_src] \
-	genodelabs/pkg/[drivers_interactive_pkg] \
-	genodelabs/src/init \
-	genodelabs/pkg/terminal \
-	genodelabs/src/input_filter \
+	[depot_user]/pkg/[drivers_interactive_pkg] \
+	[depot_user]/pkg/terminal \
+	[depot_user]/src/[base_src] \
+	[depot_user]/src/init \
+	[depot_user]/src/nic_router \
+	[depot_user]/src/nitpicker \
+	[depot_user]/src/pc_nic_drv \
+	[depot_user]/src/vfs \
+	[depot_user]/src/vfs_import \
+	[depot_user]/src/vfs_lwip \
 
 append config {
-<config>
+<config prio_levels="4">
 	<parent-provides>
 		<service name="CPU"/>
 		<service name="IO_MEM"/>
@@ -40,64 +39,101 @@ append config {
 	</parent-provides>
 	<default caps="100"/>
 	<default-route>
-		<any-service> <parent/> <any-child/> </any-service>
-	</default-route>}
+		<any-service> <parent/> </any-service>
+	</default-route>
 
-append_platform_drv_config
-
-append config {
 	<start name="timer">
 		<resource name="RAM" quantum="1M"/>
 		<provides> <service name="Timer"/> </provides>
 	</start>
 
-	<start name="nic_drv" caps="120">
-		<binary name="pc_nic_drv"/>
-		<resource name="RAM" quantum="16M"/>
-		<provides> <service name="Nic"/> </provides>
+	<start name="drivers" caps="1500" managing_system="yes" priority="-1">
+		<resource name="RAM" quantum="64M"/>
+		<binary name="init"/>
+		<provides>
+			<service name="Platform"/>
+		</provides>
+		<route>
+			<service name="ROM" label="config"> <parent label="drivers.config"/> </service>
+			<service name="Timer"> <child name="timer"/> </service>
+			<service name="Capture"> <child name="nitpicker"/> </service>
+			<service name="Event"> <child name="nitpicker"/> </service>
+			<any-service> <parent/> </any-service>
+		</route>
 	</start>
 
-	<start name="fb_drv" caps="200">
-		<binary name="vesa_fb_drv"/>
-		<resource name="RAM" quantum="10M"/>
-		<provides><service name="Framebuffer"/></provides>
-		<config buffered="yes"/>
-	</start>
-
-	<start name="ps2_drv">
-		<resource name="RAM" quantum="1M"/>
-		<provides><service name="Input"/></provides>
-	</start>
-
-	<start name="input_filter" caps="80">
-		<resource name="RAM" quantum="1M"/>
-		<provides> <service name="Input"/> </provides>
+	<start name="nitpicker">
+		<resource name="RAM" quantum="4M"/>
+		<provides>
+			<service name="Gui"/>
+			<service name="Capture"/>
+			<service name="Event"/>
+		</provides>
 		<config>
-			<input label="ps2"/>
-			<output>
-				<chargen>
-					<input name="ps2"/>
-					<repeat delay_ms="230" rate_ms="90"/>
-					<include rom="en_us.chargen"/>
-					<include rom="special.chargen"/>
-				</chargen>
-			</output>
+			<capture/> <event/>
+			<!-- <focus label="terminal" domain="default"/> -->
+			<domain name="default" layer="2" content="client" label="no" focus="always" hover="always"/>
+			<default-policy domain="default"/>
 		</config>
 		<route>
-			<service name="Input" label="ps2"> <child name="ps2_drv"/> </service>
-			<any-service> <parent/> <any-child/> </any-service>
+			<service name="Timer"> <child name="timer"/> </service>
+			<any-service> <parent/> </any-service>
+		</route>
+	</start>
+
+	<start name="nic_drv" priority="-1">
+		<binary name="pc_nic_drv"/>
+		<resource name="RAM" quantum="8M"/>
+		<route>
+			<service name="Platform"> <child name="drivers"/> </service>
+			<service name="Timer"> <child name="timer"/> </service>
+			<service name="Uplink"> <child name="nic_router"/> </service>
+			<any-service> <parent/> </any-service>
 		</route>
 	</start>
 
 	<start name="terminal">
-		<resource name="RAM" quantum="2M"/>
-		<provides><service name="Terminal"/></provides>
+		<resource name="RAM" quantum="36M"/>
+		<provides> <service name="Terminal"/> </provides>
 		<route>
-			<service name="ROM" label="config">
-				<parent label="terminal.config"/> </service>
-			<service name="Input">
-				<child name="input_filter"/> </service>
-			<any-service> <parent/> <any-child/> </any-service>
+			<service name="ROM" label="config"> <parent label="terminal.config"/> </service>
+			<service name="Gui"> <child name="nitpicker" label="terminal"/> </service>
+			<service name="Timer"> <child name="timer"/> </service>
+			<any-service> <parent/> </any-service>
+		</route>
+	</start>
+
+	<start name="nic_router" caps="400">
+		<resource name="RAM" quantum="36M"/>
+		<provides>
+			<service name="Nic"/>
+			<service name="Uplink"/>
+		</provides>
+		<config verbose_domain_state="yes">
+
+			<domain name="uplink">
+				<nat domain="downlink"
+				     tcp-ports="16384"
+				     udp-ports="16384"
+				     icmp-ids="16384"/>
+			</domain>
+
+			<domain name="downlink" interface="10.10.10.250/24">
+				<dhcp-server ip_first="10.10.10.2" ip_last="10.10.10.25">
+					<dns-server ip="8.8.8.8"/>
+					<dns-server ip="1.1.1.1"/>
+				</dhcp-server>
+				<tcp  dst="0.0.0.0/0"> <permit-any domain="uplink"/> </tcp>
+				<udp  dst="0.0.0.0/0"> <permit-any domain="uplink"/> </udp>
+				<icmp dst="0.0.0.0/0" domain="uplink"/>
+			</domain>
+
+			<policy label_prefix="ssh_client" domain="downlink"/>
+			<policy label_prefix="nic_drv"    domain="uplink"/>
+		</config>
+		<route>
+			<service name="Timer"> <child name="timer"/> </service>
+			<any-service> <parent/> </any-service>
 		</route>
 	</start>
 
@@ -107,42 +143,42 @@ append config {
 			<vfs>
 				<ram/>
 				<dir name="dev">
-					<log/> <null/> <inline name="rtc">2000-01-01 00:00</inline>
-					<inline name="random">01234567890123456789</inline>
+					<log/> <null/>
+					<inline name="rtc">2000-01-01 00:00</inline>
+					<inline name="random">g0Kof/YMRG8NLASiukpI6f5QQinTPyOpzkreUXr3HCMiRVpn14GkiyQ0ezrN2KAK</inline>
 				</dir>
+
 				<dir name="socket"> <lwip dhcp="yes"/> </dir>
 
 				<import>
 					<!-- sdf-eu.org -->
+					<!--
+					This server is no longer reachable!
 					<inline name="host"><host name="178.63.35.194" user="new" known="no"/></inline>
+					-->
+					<inline name="host"><host name="10.10.44.30" user="pirmin" known="no"/></inline>
+					<!--
+					How can a public-key or a password be specified?
+					-->
 				</import>
 			</vfs>
-			<libc stdout="/dev/log" stderr="/dev/log" rtc="/dev/rtc" socket="/socket"/>
+			<libc stdout="/dev/log" stderr="/dev/log" rtc="/dev/rtc" rng="/dev/random" socket="/socket"/>
 		</config>
+		<route>
+			<service name="Nic"> <child name="nic_router"/> </service>
+			<service name="Terminal"> <child name="terminal"/> </service>
+			<service name="Timer"> <child name="timer"/> </service>
+			<any-service> <parent/> </any-service>
+		</route>
 	</start>
-</config>
-}
+
+</config> }
 
 install_config $config
 
-# generic modules
-set boot_modules {
-	pc_nic_drv
-	libc.lib.so
-	libcrypto.lib.so
-	libm.lib.so
-	libssh.lib.so
-	ssh_client
-	vfs_import.lib.so
-	vfs.lib.so
-	vfs_lwip.lib.so
-	zlib.lib.so
-}
-
-# platform-specific modules
-append_platform_drv_boot_modules
-build_boot_image $boot_modules
+build_boot_image [build_artifacts]
 
 append qemu_args " -object filter-dump,id=net0,netdev=net0,file=[run_dir].pcap"
+append qemu_args " -usbdevice mouse -usbdevice keyboard "
 
 run_genode_until forever
