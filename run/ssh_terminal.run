@@ -9,37 +9,34 @@ if {[have_spec linux]} {
 	exit 0
 }
 
-# Build
-#
-
-set build_components {
-	core init timer
-	drivers/nic
-	drivers/rtc
-	server/ssh_server
-	server/fs_rom
-	server/report_rom
-	server/vfs
-	lib/vfs_jitterentropy
-	lib/vfs_lxip
-	lib/vfs_pipe
-	test/libports/ncurses
-	test/terminal_echo
-	noux-pkg/bash
-	server/nic_router
-}
-
-source ${genode_dir}/repos/base/run/platform_drv.inc
-append_platform_drv_build_components
-
-build $build_components
-
 create_boot_directory
+
+import_from_depot \
+	[depot_user]/src/[base_src] \
+	[depot_user]/pkg/[drivers_nic_pkg] \
+	[depot_user]/src/bash \
+	[depot_user]/src/coreutils-minimal \
+	[depot_user]/src/fs_rom \
+	[depot_user]/src/init \
+	[depot_user]/src/libc \
+	[depot_user]/src/libssh \
+	[depot_user]/src/ncurses \
+	[depot_user]/src/nic_router \
+	[depot_user]/src/openssl \
+	[depot_user]/src/posix \
+	[depot_user]/src/rtc_drv \
+	[depot_user]/src/ssh_server \
+	[depot_user]/src/vfs \
+	[depot_user]/src/vfs_jitterentropy \
+	[depot_user]/src/vfs_lxip \
+	[depot_user]/src/vfs_pipe \
+	[depot_user]/src/zlib
+
+build test/terminal_echo
 
 #
 # Generate config
 #
-
 set config {
 <config verbose="no">
 	<parent-provides>
@@ -68,13 +65,14 @@ set config {
 		<config verbose="yes"/>
 	</start>
 
-	<start name="nic_drv">
-		<binary name="pc_nic_drv"/>
-		<resource name="RAM" quantum="8M"/>
-		<config mode="uplink_client"/>
+	<start name="drivers" caps="1000" managing_system="yes">
+		<resource name="RAM" quantum="32M"/>
+		<binary name="init"/>
 		<route>
+			<service name="ROM" label="config"> <parent label="drivers.config"/> </service>
+			<service name="Timer"> <child name="timer"/> </service>
 			<service name="Uplink"> <child name="nic_router"/> </service>
-			<any-service> <parent/> <any-child/> </any-service>
+			<any-service> <parent/> </any-service>
 		</route>
 	</start>
 
@@ -86,28 +84,22 @@ set config {
 		</provides>
 		<config verbose_domain_state="yes">
 
-			<policy label_prefix="ssh_server" domain="downlink"/>
-			<policy label_prefix="nic_drv"    domain="uplink"/>
+			<policy label_prefix="ssh_server"         domain="downlink"/>
+			<policy label_prefix="drivers -> nic_drv" domain="uplink"/>
 
 			<domain name="uplink">
-
 				<nat domain="downlink"
 				     tcp-ports="16384"
 				     udp-ports="16384"
 				     icmp-ids="16384"/>
-
 				<tcp-forward port="22" domain="downlink" to="10.0.3.2"/>
-
 			</domain>
 
 			<domain name="downlink" interface="10.0.3.1/24">
-
 				<dhcp-server ip_first="10.0.3.2" ip_last="10.0.3.2"/>
-
 				<tcp dst="0.0.0.0/0"><permit-any domain="uplink" /></tcp>
 				<udp dst="0.0.0.0/0"><permit-any domain="uplink" /></udp>
 				<icmp dst="0.0.0.0/0" domain="uplink"/>
-
 			</domain>
 
 		</config>
@@ -202,12 +194,8 @@ set config {
 			<any-service> <parent/> <any-child/> </any-service>
 		</route>
 	</start>
+</config>
 }
-
-append_platform_drv_config
-
-append config {
-</config>}
 
 install_config $config
 
@@ -218,32 +206,11 @@ if {![file exists bin/ed25519_key]} {
 	exec ssh-keygen -t ed25519 -f bin/ed25519_key -q -N ""
 }
 
-#
-# Boot modules
-#
-
-# generic modules
-set boot_modules {
-	core ld.lib.so init timer pc_nic_drv rtc_drv report_rom vfs fs_rom
-	test-terminal_echo nic_router
-
-	libc.lib.so libm.lib.so vfs.lib.so
-	vfs_lxip.lib.so lxip.lib.so
-	posix.lib.so libcrypto.lib.so libssh.lib.so zlib.lib.so ncurses.lib.so
-	vfs_jitterentropy.lib.so vfs_pipe.lib.so ssh_server
-
-	bash.tar ed25519_key
-}
-
-# platform-specific modules
-append_platform_drv_boot_modules
-
-build_boot_image $boot_modules
+build_boot_image [list {*}[build_artifacts] ed25519_key]
 
 #
 # Execute test
 #
-
 append qemu_args     " -m 512 -nographic "
 append_qemu_nic_args "hostfwd=tcp::5555-:22"
 
