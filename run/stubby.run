@@ -5,27 +5,24 @@ if {[have_board linux]} {
 	exit 1
 }
 
-source ${genode_dir}/repos/base/run/platform_drv.inc
+create_boot_directory
 
-set build_components {
+import_from_depot \
+	[depot_user]/src/[base_src] \
+	[depot_user]/pkg/[drivers_nic_pkg] \
+	[depot_user]/src/init \
+	[depot_user]/src/nic_router \
+	[depot_user]/src/rtc_drv \
+	[depot_user]/src/sequence \
+	[depot_user]/src/vfs \
+	[depot_user]/src/vfs_jitterentropy \
+	[depot_user]/src/vfs_lxip \
+
+build {
 	app/drill
-	app/sequence
 	app/stubby
-	core init timer
-	drivers/nic
-	drivers/rtc
-	lib/vfs_jitterentropy
-	lib/vfs_lxip
-	server/nic_router
-	server/vfs
 	test/libc_getaddrinfo
 }
-
-append_platform_drv_build_components
-
-build $build_components
-
-create_boot_directory
 
 append config {
 <config>
@@ -43,24 +40,29 @@ append config {
 		<service name="Nic"> <child name="nic_router"/> </service>
 		<any-service> <parent/> <any-child/> </any-service>
 	</default-route>
-	<default caps="128"/>}
+	<default caps="128"/>
 
-append_platform_drv_config
-
-append config {
 	<start name="timer">
 		<resource name="RAM" quantum="1M"/>
 		<provides> <service name="Timer"/> </provides>
 	</start>
+
+	<start name="drivers" caps="1000" managing_system="yes">
+		<resource name="RAM" quantum="32M"/>
+		<binary name="init"/>
+		<route>
+			<service name="ROM" label="config"> <parent label="drivers.config"/> </service>
+			<service name="Timer"> <child name="timer"/> </service>
+			<service name="Uplink"> <child name="nic_router"/> </service>
+			<any-service> <parent/> </any-service>
+		</route>
+	</start>
+
 	<start name="rtc_drv">
 		<resource name="RAM" quantum="1M"/>
 		<provides> <service name="Rtc"/> </provides>
 	</start>
-	<start name="nic_drv">
-		<binary name="pc_nic_drv"/>
-		<resource name="RAM" quantum="8M"/>
-		<provides> <service name="Nic"/> </provides>
-	</start>
+
 	<start name="nic_router" caps="200">
 		<resource name="RAM" quantum="10M"/>
 		<provides>
@@ -68,9 +70,10 @@ append config {
 			<service name="Uplink"/>
 		</provides>
 		<config verbose="no">
-			<policy label_prefix="vfs"    domain="default" />
-			<policy label_prefix="stubby" domain="dns"     />
-			<nic-client                   domain="uplink"  />
+
+			<policy label_prefix="vfs"     domain="default"/>
+			<policy label_prefix="stubby"  domain="dns"    />
+			<policy label_prefix="drivers" domain="uplink" />
 
 			<domain name="uplink">
 				<nat domain="dns" tcp-ports="64" udp-ports="64"/>
@@ -99,6 +102,7 @@ append config {
 			<any-service> <parent/> <any-child/> </any-service>
 		</route>
 	</start>
+
 	<start name="stubby" caps="512">
 		<resource name="RAM" quantum="32M"/>
 		<config>
@@ -123,6 +127,7 @@ listen_addresses:
 			<arg value="/stubby.yaml"/>
 		</config>
 	</start>
+
 	<start name="vfs">
 		<resource name="RAM" quantum="32M"/>
 		<provides> <service name="File_system"/> </provides>
@@ -133,6 +138,7 @@ listen_addresses:
 			<default-policy writeable="yes" root="/"/>
 		</config>
 	</start>
+
 	<start name="application" caps="256">
 		<binary name="sequence"/>
 		<resource name="RAM" quantum="8M"/>
@@ -156,9 +162,13 @@ listen_addresses:
 				<config>
 					<vfs>
 						<fs/>
-						<dir name="dev"> <log/> </dir>
+						<dir name="dev">
+							<log/> <null/> <rtc/>
+							<inline name="random">g0Kof/YMRG8NLASiukpI6f5QQinTPyOpzkreUXr3HCMiRVpn14GkiyQ0ezrN2KAK</inline>
+						</dir>
 					</vfs>
-					<libc stdout="/dev/log" stderr="/dev/log" rtc="/dev/rtc" socket="/socket"/>
+					<libc stdout="/dev/log" stderr="/dev/log"
+					      rtc="/dev/rtc" rng="/dev/random" socket="/socket"/>
 					<arg value="drill"/>
 					<arg value="genode.org"/>
 					<arg value="@10.0.53.2"/>
@@ -171,29 +181,7 @@ listen_addresses:
 
 install_config $config
 
-set boot_modules {
-	core init ld.lib.so 
-	drill
-	libc.lib.so libm.lib.so posix.lib.so
-	libcrypto.lib.so
-	libgetdns.lib.so
-	libssl.lib.so
-	lxip.lib.so vfs_lxip.lib.so
-	nic_router
-	pc_nic_drv
-	rtc_drv
-	sequence
-	stubby
-	timer
-	test-libc_getaddrinfo
-	vfs
-	vfs_jitterentropy.lib.so
-}
-
-# platform-specific modules
-append_platform_drv_boot_modules
-
-build_boot_image $boot_modules
+build_boot_image [build_artifacts]
 
 append qemu_args " -nographic -object filter-dump,id=net0,netdev=net0,file=[run_dir]/dump.pcap"
 
