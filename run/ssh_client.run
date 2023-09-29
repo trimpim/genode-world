@@ -14,7 +14,7 @@ build $build_components
 create_boot_directory
 
 import_from_depot \
-	[depot_user]/pkg/[drivers_interactive_pkg] \
+	[depot_user]/pkg/drivers_managed-pc \
 	[depot_user]/pkg/terminal \
 	[depot_user]/src/[base_src] \
 	[depot_user]/src/init \
@@ -47,17 +47,38 @@ append config {
 		<provides> <service name="Timer"/> </provides>
 	</start>
 
-	<start name="drivers" caps="1500" managing_system="yes" priority="-1">
-		<resource name="RAM" quantum="64M"/>
+	<start name="drivers_report_rom">
+		<binary name="report_rom"/>
+		<resource name="RAM" quantum="2M"/>
+		<provides>
+			<service name="Report"/>
+			<service name="ROM"/>
+		</provides>
+		<config verbose="no">
+			<policy label_suffix="capslock" report="null"/>
+			<policy label_suffix="numlock" report="null"/>
+			<policy label_suffix="system" report="null"/>
+			<policy label_suffix="usb_policy" report="null"/>
+		</config>
+	</start>
+
+	<start name="drivers" caps="5000" managing_system="yes" priority="-1">
+		<resource name="RAM" quantum="128M"/>
 		<binary name="init"/>
 		<provides>
 			<service name="Platform"/>
 		</provides>
 		<route>
-			<service name="ROM" label="config"> <parent label="drivers.config"/> </service>
-			<service name="Timer"> <child name="timer"/> </service>
 			<service name="Capture"> <child name="nitpicker"/> </service>
 			<service name="Event"> <child name="nitpicker"/> </service>
+			<service name="ROM" label="config"> <parent label="drivers.config"/> </service>
+			<service name="ROM" label_last="capslock"> <child name="drivers_report_rom"/> </service>
+			<service name="ROM" label_last="numlock"> <child name="drivers_report_rom"/> </service>
+			<service name="ROM" label_last="system"> <child name="drivers_report_rom"/> </service>
+			<service name="ROM" label_last="usb_policy"> <child name="drivers_report_rom"/> </service>
+			<service name="Report"> <child name="drivers_report_rom"/> </service>
+			<service name="Timer"> <child name="timer"/> </service>
+			<service name="Uplink"> <child name="nic_router"/> </service>
 			<any-service> <parent/> </any-service>
 		</route>
 	</start>
@@ -71,8 +92,7 @@ append config {
 		</provides>
 		<config>
 			<capture/> <event/>
-			<!-- <focus label="terminal" domain="default"/> -->
-			<domain name="default" layer="2" content="client" label="no" focus="always" hover="always"/>
+			<domain name="default" layer="2" content="client" label="no" focus="click" hover="always"/>
 			<default-policy domain="default"/>
 		</config>
 		<route>
@@ -85,7 +105,7 @@ append config {
 		<binary name="pc_nic_drv"/>
 		<resource name="RAM" quantum="8M"/>
 		<route>
-			<service name="Platform"> <child name="drivers"/> </service>
+			<service name="Platform"> <child name="drivers" label="nic_drv -> nic"/> </service>
 			<service name="Timer"> <child name="timer"/> </service>
 			<service name="Uplink"> <child name="nic_router"/> </service>
 			<any-service> <parent/> </any-service>
@@ -147,19 +167,12 @@ append config {
 					<inline name="rtc">2000-01-01 00:00</inline>
 					<inline name="random">g0Kof/YMRG8NLASiukpI6f5QQinTPyOpzkreUXr3HCMiRVpn14GkiyQ0ezrN2KAK</inline>
 				</dir>
-
 				<dir name="socket"> <lwip dhcp="yes"/> </dir>
-
 				<import>
-					<!-- sdf-eu.org -->
-					<!--
-					This server is no longer reachable!
-					<inline name="host"><host name="178.63.35.194" user="new" known="no"/></inline>
-					-->
-					<inline name="host"><host name="10.10.44.30" user="pirmin" known="no"/></inline>
-					<!--
-					How can a public-key or a password be specified?
-					-->
+					<!-- cange this to match you ssh destinations -->
+					<inline name="host">
+						<host name="10.10.10.10" user="user" pass="ssap" known="no"/>
+					</inline>
 				</import>
 			</vfs>
 			<libc stdout="/dev/log" stderr="/dev/log" rtc="/dev/rtc" rng="/dev/random" socket="/socket"/>
