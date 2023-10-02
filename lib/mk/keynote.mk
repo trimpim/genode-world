@@ -5,6 +5,8 @@ LIBS    += libc libm libcrypto
 SHARED_LIB = yes
 
 INC_DIR += $(REP_DIR)/src/lib/keynote
+INC_DIR += $(OPENSSL_DIR)/src/lib/openssl/crypto
+INC_DIR += $(OPENSSL_DIR)/src/lib/openssl/include
 
 # keynote headres
 INC_DIR += $(KEYNOTE_DIR)/include

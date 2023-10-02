@@ -6,7 +6,8 @@ URL(keynote) := https://www.cs.columbia.edu/~angelos/Code/keynote.tar.gz
 SHA(keynote) :=62f7a9d57ceb6bcdd47b604b637a7ac8ed337cef0ab02f1fa28b7e61c9b15821
 DIR(keynote) := src/lib/keynote
 
-
+PATCHES := src/lib/keynote/openss3.patch
+PATCH_OPT := -N -p1 -d ${DIR(keynote)}
 
 DIRS := include/keynote
 DIR_CONTENT(include/keynote) := src/lib/keynote/keynote.h\

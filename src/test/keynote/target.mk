@@ -1,5 +1,5 @@
 TARGET = test-keynote
-LIBS   =libc keynote libm
+LIBS   = libc keynote libm libcrypto
 SRC_CC = main.cc
 
 vpath main.cc $(PRG_DIR)/..

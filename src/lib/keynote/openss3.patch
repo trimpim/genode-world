@@ -1,0 +1,91 @@
+diff --git a/auxil.c b/auxil.c
+index 61f3acc..f444f87 100644
+--- a/auxil.c
++++ b/auxil.c
+@@ -40,6 +40,10 @@
+ #include "assertion.h"
+ #include "signature.h"
+ 
++
++#include <dsa/dsa_local.h>
++#include <rsa/rsa_local.h>
++
+ /*
+  * Get some sort of key-hash for hash table indexing purposes.
+  */
+@@ -61,9 +65,9 @@ keynote_keyhash(void *key, int alg)
+ #ifdef CRYPTO
+ 	case KEYNOTE_ALGORITHM_DSA:
+ 	    dsa = (DSA *) key;
+-	    res += BN_mod_word(dsa->p, HASHTABLESIZE);
+-	    res += BN_mod_word(dsa->q, HASHTABLESIZE);
+-	    res += BN_mod_word(dsa->g, HASHTABLESIZE);
++	    res += BN_mod_word(dsa->params.p, HASHTABLESIZE);
++	    res += BN_mod_word(dsa->params.q, HASHTABLESIZE);
++	    res += BN_mod_word(dsa->params.g, HASHTABLESIZE);
+ 	    res += BN_mod_word(dsa->pub_key, HASHTABLESIZE);
+ 	    return res % HASHTABLESIZE;
+ 
+diff --git a/header.h b/header.h
+index 229aad8..c1c138f 100644
+--- a/header.h
++++ b/header.h
+@@ -32,7 +32,7 @@ extern int kvparse(), kvlex();
+ extern void kverror(char *);
+ 
+ /* Variables */
+-int sessid;
++extern int sessid;
+ 
+ /* Defines */
+ #define SEED_LEN        40
+diff --git a/keynote-verify.c b/keynote-verify.c
+index 4233d89..43526f9 100644
+--- a/keynote-verify.c
++++ b/keynote-verify.c
+@@ -56,6 +56,8 @@
+ #include "header.h"
+ #include "keynote.h"
+ 
++int sessid;
++
+ void
+ verifyusage(void)
+ {
+diff --git a/signature.c b/signature.c
+index 3ce3521..57842fd 100644
+--- a/signature.c
++++ b/signature.c
+@@ -44,6 +44,10 @@
+ #include "assertion.h"
+ #include "signature.h"
+ 
++#include <crypto/evp.h>
++#include <dsa/dsa_local.h>
++#include <rsa/rsa_local.h>
++
+ static const char hextab[] = {
+      '0', '1', '2', '3', '4', '5', '6', '7',
+      '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+@@ -678,9 +682,9 @@ kn_keycompare(void *key1, void *key2, int algorithm)
+ #ifdef CRYPTO
+ 	    p1 = (DSA *) key1;
+ 	    p2 = (DSA *) key2;
+-	    if (!BN_cmp(p1->p, p2->p) &&
+-		!BN_cmp(p1->q, p2->q) &&
+-		!BN_cmp(p1->g, p2->g) &&
++	    if (!BN_cmp(p1->params.p, p2->params.p) &&
++		!BN_cmp(p1->params.q, p2->params.q) &&
++		!BN_cmp(p1->params.g, p2->params.g) &&
+ 		!BN_cmp(p1->pub_key, p2->pub_key))
+ 	      return RESULT_TRUE;
+ 	    else
+@@ -1317,7 +1321,7 @@ kn_encode_key(struct keynote_deckey *dc, int iencoding,
+ 	    return (char *) NULL;
+ 	}
+ 
+-	dsa->write_params = 1;
++	dsa->dirty_cnt = 1;
+ 	if (keytype == KEYNOTE_PUBLIC_KEY)
+ 	  i2d_DSAPublicKey(dsa, (unsigned char **) &foo);
+ 	else
