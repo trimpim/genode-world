@@ -10,6 +10,7 @@ import_from_depot [depot_user]/src/[base_src] \
                   [depot_user]/pkg/[drivers_nic_pkg] \
                   [depot_user]/src/init \
                   [depot_user]/src/libc \
+                  [depot_user]/src/nic_router \
                   [depot_user]/src/openssl \
                   [depot_user]/src/posix \
                   [depot_user]/src/rtc_drv \
@@ -41,15 +42,15 @@ install_config {
 		<provides><service name="Timer"/></provides>
 	</start>
 
-	<start name="drivers" caps="1000" managing_system="yes">
+	<start name="drivers" caps="1200" managing_system="yes">
 		<resource name="RAM" quantum="32M"/>
 		<binary name="init"/>
 		<route>
 			<service name="ROM" label="config"> <parent label="drivers.config"/> </service>
 			<service name="Timer"> <child name="timer"/> </service>
+			<service name="Uplink"> <child name="nic_router"/> </service>
 			<any-service> <parent/> </any-service>
 		</route>
-		<provides> <service name="Nic"/> </provides>
 	</start>
 
 	<start name="rtc_drv">
@@ -57,10 +58,39 @@ install_config {
 		<provides> <service name="Rtc"/> </provides>
 	</start>
 
+	<start name="nic_router" caps="400">
+		<resource name="RAM" quantum="16M"/>
+		<provides>
+			<service name="Nic"/>
+			<service name="Uplink"/>
+		</provides>
+		<config verbose_domain_state="yes">
+			<domain name="uplink">
+				<nat domain="downlink"
+				     tcp-ports="500"
+				     udp-ports="500"
+				     icmp-ids="500"/>
+			</domain>
+
+			<domain name="downlink" interface="10.0.3.250/24">
+				<tcp dst="0.0.0.0/0"> <permit-any domain="uplink"/> </tcp>
+				<udp dst="0.0.0.0/0"> <permit-any domain="uplink"/> </udp>
+				<dhcp-server ip_first="10.0.3.2"
+				             ip_last="10.0.3.2"
+				             ip_lease_time_sec="600"
+				             dns_config_from="uplink"/>
+			</domain>
+
+			<policy label_prefix="drivers -> " domain="uplink"/>
+			<policy label_prefix="drill -> " domain="downlink"/>
+		</config>
+	</start>
+
 	<start name="drill" caps="256">
 		<resource name="RAM" quantum="32M"/>
 		<config>
-			<libc stdout="/dev/log" stderr="/dev/log" rtc="/dev/rtc" socket="/socket"/>
+			<libc stdout="/dev/log" stderr="/dev/log" rtc="/dev/rtc"
+			      rng="/dev/random" socket="/socket"/>
 			<vfs>
 				<dir name="dev">
 					<log/> <rtc/>
@@ -72,7 +102,7 @@ install_config {
 			<arg value="drill"/>
 			<arg value="-T"/>
 			<arg value="genode.org"/>
-			<arg value="@10.0.2.3"/>
+			<arg value="@8.8.8.8"/>
 		</config>
 	</start>
 </config>
