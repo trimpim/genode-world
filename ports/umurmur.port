@@ -7,4 +7,5 @@ SHA(umurmur) := e77b7b6616768f4a1c07442afe49a772692f667b00c23cc85909d4dd0ce206d2
 DIR(umurmur) := src/app/umurmur
 
 PATCHES   := src/app/umurmur/umurmur.patch
+PATCHES   := src/app/umurmur/openssl3.patch
 PATCH_OPT := -p1 -d src/app/umurmur

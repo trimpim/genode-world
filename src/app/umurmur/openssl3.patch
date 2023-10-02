@@ -1,0 +1,14 @@
+diff --git a/src/ssli_openssl.c b/src/ssli_openssl.c
+index 8ff1bcf..872ddf9 100644
+--- a/src/ssli_openssl.c
++++ b/src/ssli_openssl.c
+@@ -167,9 +167,6 @@ static void SSL_initializeCert() {
+ 		if (!rsa || !did_load_cert) {
+ 			Log_info("Generating new server certificate.");
+ 
+-
+-			CRYPTO_mem_ctrl(CRYPTO_MEM_CHECK_ON);
+-
+ 			x509 = X509_new();
+ 			pkey = EVP_PKEY_new();
+ 			rsa = RSA_generate_key(4096,RSA_F4,NULL,NULL);

@@ -11,6 +11,7 @@ import_from_depot [depot_user]/src/[base_src] \
                   [depot_user]/src/libc \
                   [depot_user]/src/openssl \
                   [depot_user]/src/posix \
+                  [depot_user]/src/nic_router \
                   [depot_user]/src/vfs_lwip \
                   [depot_user]/src/vfs
 
@@ -30,30 +31,59 @@ install_config {
 		<any-service> <parent/> <any-child/> </any-service>
 	</default-route>
 	<default caps="100"/>
+
 	<start name="timer">
 		<resource name="RAM" quantum="1M"/>
 		<provides> <service name="Timer"/> </provides>
 	</start>
 
-	<start name="drivers" caps="1000" managing_system="yes">
+	<start name="drivers" caps="1200" managing_system="yes">
 		<resource name="RAM" quantum="32M"/>
 		<binary name="init"/>
 		<route>
 			<service name="ROM" label="config"> <parent label="drivers.config"/> </service>
 			<service name="Timer"> <child name="timer"/> </service>
+			<service name="Uplink"> <child name="nic_router"/> </service>
 			<any-service> <parent/> </any-service>
 		</route>
-		<provides> <service name="Nic"/> </provides>
 	</start>
 
-	<start name="umurmur" caps="120">
-		<resource name="RAM" quantum="4M"/>
+	<start name="nic_router" caps="400">
+		<resource name="RAM" quantum="16M"/>
+		<provides>
+			<service name="Nic"/>
+			<service name="Uplink"/>
+		</provides>
+		<config verbose_domain_state="yes">
+			<domain name="uplink">
+				<nat domain="downlink"
+				     tcp-ports="100"
+				     udp-ports="100"
+				     icmp-ids="100"/>
+			</domain>
+
+			<domain name="downlink" interface="10.0.3.250/24">
+				<tcp dst="0.0.0.0/0"> <permit-any domain="uplink"/> </tcp>
+				<udp dst="0.0.0.0/0"> <permit-any domain="uplink"/> </udp>
+				<dhcp-server ip_first="10.0.3.2"
+				             ip_last="10.0.3.3"
+				             ip_lease_time_sec="600"
+				             dns_config_from="uplink"/>
+			</domain>
+
+			<policy label_prefix="drivers -> " domain="uplink"/>
+			<policy label_prefix="umurmur -> " domain="downlink"/>
+		</config>
+	</start>
+
+	<start name="umurmur" caps="350">
+		<resource name="RAM" quantum="32M"/>
 		<config>
 			<vfs>
 				<dir name="dev">
 					<log/>
 					<inline name="rtc">2018-09-24 00:00</inline>
-					<inline name="random">012345678</inline>
+					<inline name="random">g0Kof/YMRG8NLASiukpI6f5QQinTPyOpzkreUXr3HCMiRVpn14GkiyQ0ezrN2KAK</inline>
 				</dir>
 
 				<dir name="socket"> <lwip dhcp="yes"/> </dir>

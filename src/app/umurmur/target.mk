@@ -25,6 +25,7 @@ SRC_C += dummy.c
 
 INC_DIR += $(UMURMUR_DIR) $(PRG_DIR)
 
+CC_C_OPT += -DCRYPTO_MEM_CHECK_ON=0x1
 LIBS += libc libcrypto libssl protobuf-c libconfig posix
 
 vpath %.c $(UMURMUR_DIR)
