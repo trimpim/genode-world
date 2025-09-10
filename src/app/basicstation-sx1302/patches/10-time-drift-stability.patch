@@ -1,0 +1,33 @@
+From a6d22d4cf76004dccc28bc1459d7fa1e935a0535 Mon Sep 17 00:00:00 2001
+From: Pirmin Duss <pirmin.duss@gapfruit.com>
+Date: Tue, 5 Aug 2025 09:27:52 +0200
+Subject: [PATCH] ral_lgw: increase time drift stability
+
+Issue gapfruit#2400
+---
+ src/ral_lgw.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/ral_lgw.c b/src/ral_lgw.c
+index c5969f7..c7bcfc9 100644
+--- a/src/ral_lgw.c
++++ b/src/ral_lgw.c
+@@ -148,6 +148,15 @@ int ral_getTimesync (u1_t pps_en, sL_t* last_xtime, timesync_t* timesync) {
+     lgw_get_trigcnt(&xticks);
+ #endif
+     ustime_t t1 = rt_getTime();
++   /*
++    * The delta of t1 - t2 is used to calculate when a packet needs to be sent
++    * to the concentrator for it to be ready for the next TX-slot.
++    * To be on the save side (because of scheduling) keep it to a minimum of ~10 ms.
++    * As a side effect the rate of excessive clock drift messages goes down by a lot.
++    */
++	while ((t1 - t0) < 10000) {
++		t1 = rt_getTime();
++	}
+     sL_t d = (s4_t)(xticks - *last_xtime);
+     if( d < 0 ) {
+         LOG(MOD_SYN|CRITICAL,
+-- 
+2.39.5
+

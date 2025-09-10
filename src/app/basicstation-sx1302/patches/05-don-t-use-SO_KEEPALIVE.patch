@@ -1,0 +1,24 @@
+From 5a8c6e66b4692822390f37308d298c2e5632be04 Mon Sep 17 00:00:00 2001
+From: Pirmin Duss <pirmin.duss@gapfruit.com>
+Date: Mon, 20 Jan 2025 13:45:48 +0100
+Subject: [PATCH] don't use SO_KEEPALIVE
+
+---
+ src/sys.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/sys.c b/src/sys.c
+index 1ae70e8..4c0a1b7 100644
+--- a/src/sys.c
++++ b/src/sys.c
+@@ -637,6 +637,7 @@ dbuf_t sys_sigKey (int key_id) {
+ void sys_keepAlive (int fd) {
+     str_t tag = "SO_KEEPALIVE";
+     int v = TCP_KEEPALIVE_EN;
++	return;
+     if( setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE,  &v, sizeof(v)) == -1 ) goto err;
+     if( v == 0 ) return;
+     tag = "TCP_KEEPCNT";
+-- 
+2.39.5
+

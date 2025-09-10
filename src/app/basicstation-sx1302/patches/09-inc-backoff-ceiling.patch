@@ -1,0 +1,28 @@
+From 7023076513b2b0ac294606fa97fe9b90ec683548 Mon Sep 17 00:00:00 2001
+From: Sid Hussmann <sid.hussmann@gapfruit.com>
+Date: Thu, 31 Jul 2025 17:31:39 +0200
+Subject: [PATCH] [PATCH] increase backoff ceiling from 16s to 256s
+
+---
+ src/app/basicstation-sx1302/src/tc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/tc.c b/src/tc.c
+index 86ba7e8..93c004d 100644
+--- a/src/tc.c
++++ b/src/tc.c
+@@ -367,9 +367,9 @@ void tc_continue (tc_t* tc) {
+
+     if( tc->muxsuri[0] != URI_BAD ) {
+         // We have a muxs uri
+-        if( tc->retries <= 4 && tstate == TC_ERR_CLOSED ) {
++        if( tc->retries <= 6 && tstate == TC_ERR_CLOSED ) {
+             // Try to reconnect with increasing backoff
+-            int backoff = 1 << tc->retries;
++            int backoff = 4 << tc->retries;
+             tc->tstate = TC_MUXS_BACKOFF;
+             rt_setTimerCb(&tc->timeout, rt_seconds_ahead(backoff), tc->ondone);
+             LOG(MOD_TCE|INFO, "MUXS reconnect backoff %ds (retry %d)", backoff, tc->retries);
+--
+2.39.5
+

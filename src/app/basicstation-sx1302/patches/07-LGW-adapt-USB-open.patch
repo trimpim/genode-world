@@ -1,0 +1,35 @@
+From 6d856946153d4c9aabb50d6bd216c6a382435246 Mon Sep 17 00:00:00 2001
+From: Pirmin Duss <pirmin.duss@gapfruit.com>
+Date: Sun, 9 Mar 2025 10:02:22 +0100
+Subject: [PATCH] LGW: adapt USB open to Genode
+
+---
+ libloragw/src/loragw_usb.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/libloragw/src/loragw_usb.c b/libloragw/src/loragw_usb.c
+index b69f73c..4adc86e 100644
+--- a/libloragw/src/loragw_usb.c
++++ b/libloragw/src/loragw_usb.c
+@@ -155,7 +155,7 @@ int lgw_usb_open(const char * com_path, void **com_target_ptr) {
+ 
+     /* open tty port */
+     sprintf(portname, "%s", com_path);
+-    fd = open(portname, O_RDWR | O_NOCTTY | O_SYNC);
++    fd = open(portname, O_RDWR | O_NOCTTY | O_SYNC | O_NONBLOCK);
+     if (fd < 0) {
+         ERROR_PRINTF("failed to open COM port %s - %s\n", portname, strerror(errno));
+     } else {
+@@ -176,6 +176,9 @@ int lgw_usb_open(const char * com_path, void **com_target_ptr) {
+             }
+         } while (n > 0);
+ 
++        close(fd);
++        fd = open(portname, O_RDWR | O_NOCTTY | O_SYNC);
++
+         /* set tty port blocking */
+         INFO_PRINTF("INFO: Setting TTY in blocking mode\n");
+         x = set_blocking_linux(fd, true);
+-- 
+2.39.5
+

@@ -1,0 +1,65 @@
+From fc5e6e6c1278c955dc1969a11f2b4dd116a7cd2a Mon Sep 17 00:00:00 2001
+From: Pirmin Duss <pirmin.duss@gapfruit.com>
+Date: Tue, 10 Dec 2024 16:34:37 +0100
+Subject: [PATCH] add sys/unistd.h
+
+---
+ src/app/basicstation-sx1302/src-linux/sys_linux.c | 1 +
+ src/app/basicstation-sx1302/src/fs.c              | 1 +
+ src/app/basicstation-sx1302/src/selftest_fs.c     | 1 +
+ src/app/basicstation-sx1302/src/sys.c             | 1 +
+ 4 files changed, 4 insertions(+)
+
+diff --git a/src/app/basicstation-sx1302/src-linux/sys_linux.c b/src/app/basicstation-sx1302/src-linux/sys_linux.c
+index 2bbb7e5..9ab28e7 100644
+--- a/src/app/basicstation-sx1302/src-linux/sys_linux.c
++++ b/src/app/basicstation-sx1302/src-linux/sys_linux.c
+@@ -37,6 +37,7 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <sys/wait.h>
++#include <sys/unistd.h>
+ 
+ #include "argp2.h"
+ #include "s2conf.h"
+diff --git a/src/app/basicstation-sx1302/src/fs.c b/src/app/basicstation-sx1302/src/fs.c
+index 60e4fd0..4f619d1 100644
+--- a/src/app/basicstation-sx1302/src/fs.c
++++ b/src/app/basicstation-sx1302/src/fs.c
+@@ -28,6 +28,7 @@
+ 
+ #include <stdio.h>
+ #include <fcntl.h>
++#include <sys/unistd.h>
+ 
+ 
+ #if defined(CFG_linux) || defined(CFG_flashsim)
+diff --git a/src/app/basicstation-sx1302/src/selftest_fs.c b/src/app/basicstation-sx1302/src/selftest_fs.c
+index 62cac6d..89c5c44 100644
+--- a/src/app/basicstation-sx1302/src/selftest_fs.c
++++ b/src/app/basicstation-sx1302/src/selftest_fs.c
+@@ -31,6 +31,7 @@
+ #include <fcntl.h>
+ #include <errno.h>
+ #include <sys/stat.h>
++#include <sys/unistd.h>
+ #include "selftests.h"
+ #include "rt.h"
+ #include "fs.h"
+diff --git a/src/app/basicstation-sx1302/src/sys.c b/src/app/basicstation-sx1302/src/sys.c
+index 9ed2f36..eb4ff7d 100644
+--- a/src/app/basicstation-sx1302/src/sys.c
++++ b/src/app/basicstation-sx1302/src/sys.c
+@@ -28,6 +28,9 @@
+ 
+ #include <stdio.h>
+ #include <fcntl.h>
++#include <sys/unistd.h>
++#include <netinet/in.h>
++#include <sys/socket.h>
+ 
+ 
+ #if defined(CFG_linux) || defined(CFG_flashsim)
+-- 
+2.39.5
+

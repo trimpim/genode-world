@@ -1,0 +1,35 @@
+From c253ace6c4ae7d181755e65e2d9d78e5bfc40cb9 Mon Sep 17 00:00:00 2001
+From: Pirmin Duss <pirmin@trimpim.ch>
+Date: Tue, 10 Dec 2024 12:00:00 +0100
+Subject: [PATCH] loragw_gps: fix timezone handling for BSD
+
+---
+ deps/lgw/platform-genode/libloragw/src/loragw_gps.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/deps/lgw/platform-genode/libloragw/src/loragw_gps.c b/deps/lgw/platform-genode/libloragw/src/loragw_gps.c
+index c0e0ded..2050a5c 100644
+--- a/deps/lgw/platform-genode/libloragw/src/loragw_gps.c
++++ b/deps/lgw/platform-genode/libloragw/src/loragw_gps.c
+@@ -614,12 +614,17 @@ int lgw_gps_get(struct timespec *utc, struct timespec *gps_time, struct coord_s
+         } else { /* 4-digits year, Gregorian calendar */
+             x.tm_year = gps_yea - 1900;
+         }
++		time_t t = time(NULL);
++		struct tm lt = { 0 };
++
++		localtime_r(&t, &lt);
++
+         x.tm_mon = gps_mon - 1; /* tm_mon is [0,11], gps_mon is [1,12] */
+         x.tm_mday = gps_day;
+         x.tm_hour = gps_hou;
+         x.tm_min = gps_min;
+         x.tm_sec = gps_sec;
+-        y = mktime(&x) - timezone; /* need to substract timezone bc mktime assumes time vector is local time */
++        y = mktime(&x) - lt.tm_gmtoff; /* need to substract timezone bc mktime assumes time vector is local time */
+         if (y == (time_t)(-1)) {
+             DEBUG_MSG("ERROR: FAILED TO CONVERT BROKEN-DOWN TIME\n");
+             return LGW_GPS_ERROR;
+-- 
+2.39.5
+

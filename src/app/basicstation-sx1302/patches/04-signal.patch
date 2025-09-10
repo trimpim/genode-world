@@ -1,0 +1,24 @@
+From f97aa79b52c7557d6ab288ec8cab27e1070ebf35 Mon Sep 17 00:00:00 2001
+From: Pirmin Duss <pirmin@trimpim.ch>
+Date: Wed, 11 Dec 2024 10:51:49 +0100
+Subject: [PATCH] add signal.h
+
+---
+ src-linux/sys_linux.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src-linux/sys_linux.c b/src-linux/sys_linux.c
+index 9ab28e7..b6fe27a 100644
+--- a/src-linux/sys_linux.c
++++ b/src-linux/sys_linux.c
+@@ -38,6 +38,7 @@
+ #include <sys/stat.h>
+ #include <sys/wait.h>
+ #include <sys/unistd.h>
++#include <sys/signal.h>
+ 
+ #include "argp2.h"
+ #include "s2conf.h"
+-- 
+2.39.5
+

@@ -1,0 +1,61 @@
+From 641033407d3e970243e9ca17d112c097f530f795 Mon Sep 17 00:00:00 2001
+From: Pirmin Duss <pirmin.duss@gapfruit.com>
+Date: Wed, 22 Jan 2025 12:49:17 +0100
+Subject: [PATCH] sx130x: fix include path
+
+---
+ src/ral_lgw.c    | 6 +++---
+ src/sx130xconf.c | 4 ++--
+ src/sx130xconf.h | 2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/src/ral_lgw.c b/src/ral_lgw.c
+index c960acc..c5969f7 100644
+--- a/src/ral_lgw.c
++++ b/src/ral_lgw.c
+@@ -38,10 +38,10 @@
+ #include "sys.h"
+ #include "sx130xconf.h"
+ #include "ral.h"
+-#include "lgw/loragw_reg.h"
+-#include "lgw/loragw_hal.h"
++#include "inc/loragw_reg.h"
++#include "inc/loragw_hal.h"
+ #if defined(CFG_sx1302)
+-#include "lgw/loragw_sx1302_timestamp.h"
++#include "inc/loragw_sx1302_timestamp.h"
+ extern timestamp_counter_t counter_us; // from loragw_sx1302.c
+ #endif // defined(CFG_sx1302)
+ 
+diff --git a/src/sx130xconf.c b/src/sx130xconf.c
+index b7a33b0..32f7f99 100644
+--- a/src/sx130xconf.c
++++ b/src/sx130xconf.c
+@@ -35,9 +35,9 @@
+ #include "sys_linux.h"
+ #endif // defined(CFG_linux)
+ #include "sx130xconf.h"
+-#include "lgw/loragw_reg.h"
++#include "inc/loragw_reg.h"
+ #if defined(CFG_sx1302)
+-#include "lgw/loragw_sx1302.h"
++#include "inc/loragw_sx1302.h"
+ #endif // defined(CFG_sx1302)
+ 
+ #define SX130X_RFE_MAX 400000  // Max if offset 400kHz
+diff --git a/src/sx130xconf.h b/src/sx130xconf.h
+index 70531e8..76be8b9 100644
+--- a/src/sx130xconf.h
++++ b/src/sx130xconf.h
+@@ -31,7 +31,7 @@
+ #if defined(CFG_lgw1)
+ 
+ #include <stdio.h> // loragw_fpga.h refers to FILE
+-#include "lgw/loragw_hal.h"
++#include "inc/loragw_hal.h"
+ #if !defined(CFG_sx1302)
+ #include "lgw/loragw_lbt.h"
+ #include "lgw/loragw_fpga.h"
+-- 
+2.39.5
+

@@ -1,0 +1,57 @@
+LICENSE    := BSD
+VERSION    := 2.0.6
+
+DOWNLOADS  += basicstation.archive libloragw.archive
+
+libloragw.archive: basicstation.archive
+
+VERSION_basicstation  := $(VERSION)
+URL(basicstation)     := https://github.com/lorabasics/basicstation/archive/refs/tags/v$(VERSION_basicstation).tar.gz
+DIR(basicstation)     := src/app/basicstation-sx1302
+SHA(basicstation)     := 7e285de94bae1174b4c3496fc3ab15fe67c72f92c0693d2320bafc654a9dfb43
+
+VERSION_libloragw     := 2.1.0
+URL(libloragw)        := https://github.com/Lora-net/sx1302_hal/archive/refs/tags/V$(VERSION_libloragw).tar.gz
+DIR(libloragw)        := src/app/basicstation-sx1302/deps/lgw1302/platform-genode
+SHA(libloragw)        := 4b62aa6a83ad449c68fdd844fc35024586c9faabca3c5a90a2544735b380de5b
+
+PATCHES_DIR           := src/app/basicstation-sx1302/patches
+PATCH_DEST            := src/app/basicstation-sx1302
+
+PATCHES               += $(PATCHES_DIR)/02-BSD_timezone.patch
+PATCHES               += $(PATCHES_DIR)/03-unistd.patch
+PATCHES               += $(PATCHES_DIR)/04-signal.patch
+PATCHES               += $(PATCHES_DIR)/05-don-t-use-SO_KEEPALIVE.patch
+PATCHES               += $(PATCHES_DIR)/06-sx130x-fix-include.patch
+PATCHES               += $(PATCHES_DIR)/07-LGW-adapt-USB-open.patch
+PATCHES               += $(PATCHES_DIR)/09-inc-backoff-ceiling.patch
+PATCHES               += $(PATCHES_DIR)/10-time-drift-stability.patch
+
+PATCH_OPT($(PATCHES_DIR)/02-BSD_timezone.patch)            := -p4 -d $(PATCH_DEST)/deps/lgw1302/platform-genode
+PATCH_OPT($(PATCHES_DIR)/03-unistd.patch)                  := -p4 -d $(PATCH_DEST)
+PATCH_OPT($(PATCHES_DIR)/04-signal.patch)                  := -p1 -d $(PATCH_DEST)
+PATCH_OPT($(PATCHES_DIR)/05-don-t-use-SO_KEEPALIVE.patch)  := -p1 -d $(PATCH_DEST)
+PATCH_OPT($(PATCHES_DIR)/06-sx130x-fix-include.patch)      := -p1 -d $(PATCH_DEST)
+PATCH_OPT($(PATCHES_DIR)/07-LGW-adapt-USB-open.patch)      := -p1 -d $(PATCH_DEST)/deps/lgw1302/platform-genode
+PATCH_OPT($(PATCHES_DIR)/09-inc-backoff-ceiling.patch)     := -p1 -d $(PATCH_DEST)
+PATCH_OPT($(PATCHES_DIR)/10-time-drift-stability.patch)    := -p1 -d $(PATCH_DEST)
+
+
+#
+# For Sx1302 support we need to apply the patch provided in the source archive
+#
+default: basicstation.archive libloragw.archive
+	cd src/app/basicstation-sx1302/deps/lgw1302; patch -p1 -d platform-genode -i ../V2.1.0-corecell.patch
+
+#
+# Unfortunately, we have to check manually whether the target linux archive got already
+# unpacked and eventually have to delete it. Otherwise newly created files by the patches
+# stand in the way when re-applying the patches.
+#
+
+basicstation.archive: delete_target
+
+delete_target:
+	@if [ -s src/app/basicstation-sx1302 ]; then rm -rf src/app/basicstation-sx1302 ; fi
+
+# vim: ft=make
