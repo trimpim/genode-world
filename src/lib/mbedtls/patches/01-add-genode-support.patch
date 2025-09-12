@@ -1,52 +1,67 @@
-From baaf9e2e10a8c1f42812756e910ce4e14669a0d7 Mon Sep 17 00:00:00 2001
+From 5d80e4c3af9d66fb6287f18f391f49e194f5fb31 Mon Sep 17 00:00:00 2001
 From: Pirmin Duss <pirmin.duss@gapfruit.com>
-Date: Thu, 23 Jan 2025 14:00:50 +0100
+Date: Fri, 12 Sep 2025 13:59:24 +0200
 Subject: [PATCH] add Genode support
 
 ---
- library/entropy_poll.c | 2 +-
- library/net_sockets.c  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ library/entropy_poll.c  | 2 +-
+ library/net_sockets.c   | 2 +-
+ library/platform_util.c | 2 +-
+ library/timing.c        | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/library/entropy_poll.c b/library/entropy_poll.c
-index 2c1e093..2ad8bfe 100644
+index 611768c..26ebc14 100644
 --- a/library/entropy_poll.c
 +++ b/library/entropy_poll.c
-@@ -46,7 +46,7 @@
+@@ -31,7 +31,7 @@
  
  #if !defined(unix) && !defined(__unix__) && !defined(__unix) && \
      !defined(__APPLE__) && !defined(_WIN32) && !defined(__QNXNTO__) && \
--    !defined(__HAIKU__) && !defined(__midipix__)
-+    !defined(__HAIKU__) && !defined(__midipix__) && !defined(__GENODE__)
- #error "Platform entropy sources only work on Unix and Windows, see MBEDTLS_NO_PLATFORM_ENTROPY in config.h"
+-    !defined(__HAIKU__) && !defined(__midipix__) && !defined(__MVS__)
++    !defined(__HAIKU__) && !defined(__midipix__) && !defined(__MVS__) && !defined(__GENODE__)
+ #error \
+     "Platform entropy sources only work on Unix and Windows, see MBEDTLS_NO_PLATFORM_ENTROPY in mbedtls_config.h"
  #endif
- 
 diff --git a/library/net_sockets.c b/library/net_sockets.c
-index 5fbe1f7..9ec0354 100644
+index 1419c78..a9e7fb1 100644
 --- a/library/net_sockets.c
 +++ b/library/net_sockets.c
-@@ -33,7 +33,7 @@
+@@ -21,7 +21,7 @@
  
  #if !defined(unix) && !defined(__unix__) && !defined(__unix) && \
      !defined(__APPLE__) && !defined(_WIN32) && !defined(__QNXNTO__) && \
 -    !defined(__HAIKU__) && !defined(__midipix__)
 +    !defined(__HAIKU__) && !defined(__midipix__) && !defined(__GENODE__)
- #error "This module only works on Unix and Windows, see MBEDTLS_NET_C in config.h"
+ #error "This module only works on Unix and Windows, see MBEDTLS_NET_C in mbedtls_config.h"
  #endif
  
+diff --git a/library/platform_util.c b/library/platform_util.c
+index 19ef07a..2e69a7f 100644
+--- a/library/platform_util.c
++++ b/library/platform_util.c
+@@ -224,7 +224,7 @@ void (*mbedtls_test_hook_test_fail)(const char *, int, const char *);
+ #include <unistd.h>
+ #endif \
+     /* !_WIN32 && (unix || __unix || __unix__ || (__APPLE__ && __MACH__) || __HAIKU__ || __midipix__) */
+-#if (defined(_POSIX_VERSION) && _POSIX_VERSION >= 199309L) || defined(__HAIKU__)
++#if (defined(_POSIX_VERSION) && _POSIX_VERSION >= 199309L) || defined(__HAIKU__) || defined(__GENODE__)
+ mbedtls_ms_time_t mbedtls_ms_time(void)
+ {
+     int ret;
 diff --git a/library/timing.c b/library/timing.c
-index eb41461..cb2e151 100644
+index 58f1c1e..9f47b4d 100644
 --- a/library/timing.c
 +++ b/library/timing.c
-@@ -34,7 +34,7 @@
-
+@@ -15,7 +15,7 @@
+ 
  #if !defined(unix) && !defined(__unix__) && !defined(__unix) && \
      !defined(__APPLE__) && !defined(_WIN32) && !defined(__QNXNTO__) && \
 -    !defined(__HAIKU__) && !defined(__midipix__)
 +    !defined(__HAIKU__) && !defined(__midipix__) && !defined(__GENODE__)
- #error "This module only works on Unix and Windows, see MBEDTLS_TIMING_C in config.h"
+ #error "This module only works on Unix and Windows, see MBEDTLS_TIMING_C in mbedtls_config.h"
  #endif
  
 -- 
-2.39.5
+2.47.2
 

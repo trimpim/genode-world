@@ -1,5 +1,6 @@
 __gnu_Unwind_Find_exidx T
 dl_unwind_find_exidx W
+mbedtls_aes_cmac_prf_128 T
 mbedtls_aes_crypt_cbc T
 mbedtls_aes_crypt_cfb128 T
 mbedtls_aes_crypt_cfb8 T
@@ -7,8 +8,6 @@ mbedtls_aes_crypt_ctr T
 mbedtls_aes_crypt_ecb T
 mbedtls_aes_crypt_ofb T
 mbedtls_aes_crypt_xts T
-mbedtls_aes_decrypt T
-mbedtls_aes_encrypt T
 mbedtls_aes_free T
 mbedtls_aes_init T
 mbedtls_aes_self_test T
@@ -18,14 +17,24 @@ mbedtls_aes_xts_free T
 mbedtls_aes_xts_init T
 mbedtls_aes_xts_setkey_dec T
 mbedtls_aes_xts_setkey_enc T
-mbedtls_arc4_crypt T
-mbedtls_arc4_free T
-mbedtls_arc4_init T
-mbedtls_arc4_self_test T
-mbedtls_arc4_setup T
+mbedtls_aesni_crypt_ecb T
+mbedtls_aesni_gcm_mult T
+mbedtls_aesni_has_support T
+mbedtls_aesni_inverse_key T
+mbedtls_aesni_setkey_enc T
+mbedtls_aria_crypt_cbc T
+mbedtls_aria_crypt_cfb128 T
+mbedtls_aria_crypt_ctr T
+mbedtls_aria_crypt_ecb T
+mbedtls_aria_free T
+mbedtls_aria_init T
+mbedtls_aria_self_test T
+mbedtls_aria_setkey_dec T
+mbedtls_aria_setkey_enc T
 mbedtls_asn1_find_named_data T
 mbedtls_asn1_free_named_data T
 mbedtls_asn1_free_named_data_list T
+mbedtls_asn1_free_named_data_list_shallow T
 mbedtls_asn1_get_alg T
 mbedtls_asn1_get_alg_null T
 mbedtls_asn1_get_bitstring T
@@ -41,6 +50,7 @@ mbedtls_asn1_sequence_free T
 mbedtls_asn1_store_named_data T
 mbedtls_asn1_traverse_sequence_of T
 mbedtls_asn1_write_algorithm_identifier T
+mbedtls_asn1_write_algorithm_identifier_ext T
 mbedtls_asn1_write_bitstring T
 mbedtls_asn1_write_bool T
 mbedtls_asn1_write_enum T
@@ -60,13 +70,6 @@ mbedtls_asn1_write_utf8_string T
 mbedtls_base64_decode T
 mbedtls_base64_encode T
 mbedtls_base64_self_test T
-mbedtls_blowfish_crypt_cbc T
-mbedtls_blowfish_crypt_cfb64 T
-mbedtls_blowfish_crypt_ctr T
-mbedtls_blowfish_crypt_ecb T
-mbedtls_blowfish_free T
-mbedtls_blowfish_init T
-mbedtls_blowfish_setkey T
 mbedtls_camellia_crypt_cbc T
 mbedtls_camellia_crypt_cfb128 T
 mbedtls_camellia_crypt_ctr T
@@ -78,12 +81,17 @@ mbedtls_camellia_setkey_dec T
 mbedtls_camellia_setkey_enc T
 mbedtls_ccm_auth_decrypt T
 mbedtls_ccm_encrypt_and_tag T
+mbedtls_ccm_finish T
 mbedtls_ccm_free T
 mbedtls_ccm_init T
 mbedtls_ccm_self_test T
+mbedtls_ccm_set_lengths T
 mbedtls_ccm_setkey T
 mbedtls_ccm_star_auth_decrypt T
 mbedtls_ccm_star_encrypt_and_tag T
+mbedtls_ccm_starts T
+mbedtls_ccm_update T
+mbedtls_ccm_update_ad T
 mbedtls_chacha20_crypt T
 mbedtls_chacha20_free T
 mbedtls_chacha20_init T
@@ -101,13 +109,17 @@ mbedtls_chachapoly_setkey T
 mbedtls_chachapoly_starts T
 mbedtls_chachapoly_update T
 mbedtls_chachapoly_update_aad T
-mbedtls_cipher_auth_decrypt T
 mbedtls_cipher_auth_decrypt_ext T
-mbedtls_cipher_auth_encrypt T
 mbedtls_cipher_auth_encrypt_ext T
+mbedtls_cipher_base_lookup_table D 128
 mbedtls_cipher_check_tag T
+mbedtls_cipher_cmac T
+mbedtls_cipher_cmac_finish T
+mbedtls_cipher_cmac_reset T
+mbedtls_cipher_cmac_starts T
+mbedtls_cipher_cmac_update T
 mbedtls_cipher_crypt T
-mbedtls_cipher_definitions D 880
+mbedtls_cipher_definitions D 1328
 mbedtls_cipher_finish T
 mbedtls_cipher_free T
 mbedtls_cipher_info_from_psa T
@@ -121,25 +133,18 @@ mbedtls_cipher_set_iv T
 mbedtls_cipher_set_padding_mode T
 mbedtls_cipher_setkey T
 mbedtls_cipher_setup T
-mbedtls_cipher_supported B 220
+mbedtls_cipher_supported B 332
 mbedtls_cipher_update T
 mbedtls_cipher_update_ad T
+mbedtls_cipher_values_from_psa T
 mbedtls_cipher_write_tag T
-mbedtls_ct_base64_dec_value T
-mbedtls_ct_base64_enc_char T
-mbedtls_ct_hmac T
+mbedtls_cmac_self_test T
 mbedtls_ct_memcmp T
-mbedtls_ct_memcpy_if_eq T
+mbedtls_ct_memcmp_partial T
+mbedtls_ct_memcpy_if T
 mbedtls_ct_memcpy_offset T
-mbedtls_ct_mpi_uint_cond_assign T
-mbedtls_ct_mpi_uint_lt T
-mbedtls_ct_mpi_uint_mask T
-mbedtls_ct_rsaes_pkcs1_v15_unpadding T
-mbedtls_ct_size_bool_eq T
-mbedtls_ct_size_mask T
-mbedtls_ct_size_mask_ge T
-mbedtls_ct_uint_if T
-mbedtls_ct_uint_mask T
+mbedtls_ct_memmove_left T
+mbedtls_ct_zeroize_if T
 mbedtls_ctr_drbg_free T
 mbedtls_ctr_drbg_init T
 mbedtls_ctr_drbg_random T
@@ -152,7 +157,6 @@ mbedtls_ctr_drbg_set_nonce_len T
 mbedtls_ctr_drbg_set_prediction_resistance T
 mbedtls_ctr_drbg_set_reseed_interval T
 mbedtls_ctr_drbg_update T
-mbedtls_ctr_drbg_update_ret T
 mbedtls_ctr_drbg_update_seed_file T
 mbedtls_ctr_drbg_write_seed_file T
 mbedtls_debug_print_buf T
@@ -184,6 +188,9 @@ mbedtls_des_setkey_dec T
 mbedtls_des_setkey_enc T
 mbedtls_dhm_calc_secret T
 mbedtls_dhm_free T
+mbedtls_dhm_get_bitlen T
+mbedtls_dhm_get_len T
+mbedtls_dhm_get_value T
 mbedtls_dhm_init T
 mbedtls_dhm_make_params T
 mbedtls_dhm_make_public T
@@ -193,12 +200,14 @@ mbedtls_dhm_read_params T
 mbedtls_dhm_read_public T
 mbedtls_dhm_self_test T
 mbedtls_dhm_set_group T
-mbedtls_ecc_group_of_psa T
+mbedtls_ecc_group_from_psa T
+mbedtls_ecc_group_to_psa T
 mbedtls_ecdh_calc_secret T
 mbedtls_ecdh_can_do T
 mbedtls_ecdh_compute_shared T
 mbedtls_ecdh_free T
 mbedtls_ecdh_gen_public T
+mbedtls_ecdh_get_grp_id T
 mbedtls_ecdh_get_params T
 mbedtls_ecdh_init T
 mbedtls_ecdh_make_params T
@@ -207,20 +216,35 @@ mbedtls_ecdh_read_params T
 mbedtls_ecdh_read_public T
 mbedtls_ecdh_setup T
 mbedtls_ecdsa_can_do T
+mbedtls_ecdsa_der_to_raw T
 mbedtls_ecdsa_free T
 mbedtls_ecdsa_from_keypair T
 mbedtls_ecdsa_genkey T
 mbedtls_ecdsa_info D 96
 mbedtls_ecdsa_init T
+mbedtls_ecdsa_raw_to_der T
 mbedtls_ecdsa_read_signature T
 mbedtls_ecdsa_read_signature_restartable T
 mbedtls_ecdsa_sign T
-mbedtls_ecdsa_sign_det T
 mbedtls_ecdsa_sign_det_ext T
+mbedtls_ecdsa_sign_det_restartable T
+mbedtls_ecdsa_sign_restartable T
 mbedtls_ecdsa_verify T
+mbedtls_ecdsa_verify_restartable T
 mbedtls_ecdsa_write_signature T
-mbedtls_ecdsa_write_signature_det T
 mbedtls_ecdsa_write_signature_restartable T
+mbedtls_ecjpake_check T
+mbedtls_ecjpake_derive_secret T
+mbedtls_ecjpake_free T
+mbedtls_ecjpake_init T
+mbedtls_ecjpake_read_round_one T
+mbedtls_ecjpake_read_round_two T
+mbedtls_ecjpake_self_test T
+mbedtls_ecjpake_set_point_format T
+mbedtls_ecjpake_setup T
+mbedtls_ecjpake_write_round_one T
+mbedtls_ecjpake_write_round_two T
+mbedtls_ecjpake_write_shared_key T
 mbedtls_eckey_info D 96
 mbedtls_eckeydh_info D 96
 mbedtls_ecp_check_privkey T
@@ -231,6 +255,7 @@ mbedtls_ecp_curve_info_from_grp_id T
 mbedtls_ecp_curve_info_from_name T
 mbedtls_ecp_curve_info_from_tls_id T
 mbedtls_ecp_curve_list T
+mbedtls_ecp_export T
 mbedtls_ecp_gen_key T
 mbedtls_ecp_gen_keypair T
 mbedtls_ecp_gen_keypair_base T
@@ -242,7 +267,9 @@ mbedtls_ecp_group_init T
 mbedtls_ecp_group_load T
 mbedtls_ecp_grp_id_list T
 mbedtls_ecp_is_zero T
+mbedtls_ecp_keypair_calc_public T
 mbedtls_ecp_keypair_free T
+mbedtls_ecp_keypair_get_group_id T
 mbedtls_ecp_keypair_init T
 mbedtls_ecp_mul T
 mbedtls_ecp_mul_restartable T
@@ -256,6 +283,7 @@ mbedtls_ecp_point_read_string T
 mbedtls_ecp_point_write_binary T
 mbedtls_ecp_read_key T
 mbedtls_ecp_self_test T
+mbedtls_ecp_set_public_key T
 mbedtls_ecp_set_zero T
 mbedtls_ecp_tls_read_group T
 mbedtls_ecp_tls_read_group_id T
@@ -263,6 +291,8 @@ mbedtls_ecp_tls_read_point T
 mbedtls_ecp_tls_write_group T
 mbedtls_ecp_tls_write_point T
 mbedtls_ecp_write_key T
+mbedtls_ecp_write_key_ext T
+mbedtls_ecp_write_public_key T
 mbedtls_entropy_add_source T
 mbedtls_entropy_free T
 mbedtls_entropy_func T
@@ -281,7 +311,7 @@ mbedtls_gcm_self_test T
 mbedtls_gcm_setkey T
 mbedtls_gcm_starts T
 mbedtls_gcm_update T
-mbedtls_hardclock_poll T
+mbedtls_gcm_update_ad T
 mbedtls_high_level_strerr T
 mbedtls_hkdf T
 mbedtls_hkdf_expand T
@@ -298,7 +328,6 @@ mbedtls_hmac_drbg_set_entropy_len T
 mbedtls_hmac_drbg_set_prediction_resistance T
 mbedtls_hmac_drbg_set_reseed_interval T
 mbedtls_hmac_drbg_update T
-mbedtls_hmac_drbg_update_ret T
 mbedtls_hmac_drbg_update_seed_file T
 mbedtls_hmac_drbg_write_seed_file T
 mbedtls_internal_aes_decrypt T
@@ -308,23 +337,30 @@ mbedtls_internal_ripemd160_process T
 mbedtls_internal_sha1_process T
 mbedtls_internal_sha256_process T
 mbedtls_internal_sha512_process T
+mbedtls_lmots_calculate_public_key_candidate T
+mbedtls_lmots_export_public_key T
+mbedtls_lmots_import_public_key T
+mbedtls_lmots_public_free T
+mbedtls_lmots_public_init T
+mbedtls_lmots_verify T
+mbedtls_lms_error_from_psa T
+mbedtls_lms_export_public_key T
+mbedtls_lms_import_public_key T
+mbedtls_lms_public_free T
+mbedtls_lms_public_init T
+mbedtls_lms_verify T
 mbedtls_low_level_strerr T
 mbedtls_md T
 mbedtls_md5 T
 mbedtls_md5_clone T
 mbedtls_md5_finish T
-mbedtls_md5_finish_ret T
 mbedtls_md5_free T
-mbedtls_md5_info D 16
 mbedtls_md5_init T
-mbedtls_md5_process T
-mbedtls_md5_ret T
 mbedtls_md5_self_test T
 mbedtls_md5_starts T
-mbedtls_md5_starts_ret T
 mbedtls_md5_update T
-mbedtls_md5_update_ret T
 mbedtls_md_clone T
+mbedtls_md_error_from_psa T
 mbedtls_md_file T
 mbedtls_md_finish T
 mbedtls_md_free T
@@ -336,13 +372,11 @@ mbedtls_md_hmac_finish T
 mbedtls_md_hmac_reset T
 mbedtls_md_hmac_starts T
 mbedtls_md_hmac_update T
-mbedtls_md_info_from_psa T
+mbedtls_md_info_from_ctx T
 mbedtls_md_info_from_string T
 mbedtls_md_info_from_type T
 mbedtls_md_init T
-mbedtls_md_init_ctx T
 mbedtls_md_list T
-mbedtls_md_process T
 mbedtls_md_setup T
 mbedtls_md_starts T
 mbedtls_md_update T
@@ -354,9 +388,40 @@ mbedtls_mpi_cmp_abs T
 mbedtls_mpi_cmp_int T
 mbedtls_mpi_cmp_mpi T
 mbedtls_mpi_copy T
+mbedtls_mpi_core_add T
+mbedtls_mpi_core_add_if T
+mbedtls_mpi_core_bigendian_to_host T
+mbedtls_mpi_core_bitlen T
+mbedtls_mpi_core_check_zero_ct T
+mbedtls_mpi_core_clz T
+mbedtls_mpi_core_cond_assign T
+mbedtls_mpi_core_cond_swap T
+mbedtls_mpi_core_exp_mod T
+mbedtls_mpi_core_exp_mod_unsafe T
+mbedtls_mpi_core_exp_mod_working_limbs T
+mbedtls_mpi_core_fill_random T
+mbedtls_mpi_core_from_mont_rep T
+mbedtls_mpi_core_get_mont_r2_unsafe T
+mbedtls_mpi_core_lt_ct T
+mbedtls_mpi_core_mla T
+mbedtls_mpi_core_montmul T
+mbedtls_mpi_core_montmul_init T
+mbedtls_mpi_core_mul T
+mbedtls_mpi_core_random T
+mbedtls_mpi_core_read_be T
+mbedtls_mpi_core_read_le T
+mbedtls_mpi_core_shift_l T
+mbedtls_mpi_core_shift_r T
+mbedtls_mpi_core_sub T
+mbedtls_mpi_core_sub_int T
+mbedtls_mpi_core_to_mont_rep T
+mbedtls_mpi_core_uint_le_mpi T
+mbedtls_mpi_core_write_be T
+mbedtls_mpi_core_write_le T
 mbedtls_mpi_div_int T
 mbedtls_mpi_div_mpi T
 mbedtls_mpi_exp_mod T
+mbedtls_mpi_exp_mod_unsafe T
 mbedtls_mpi_fill_random T
 mbedtls_mpi_free T
 mbedtls_mpi_gcd T
@@ -365,7 +430,6 @@ mbedtls_mpi_get_bit T
 mbedtls_mpi_grow T
 mbedtls_mpi_init T
 mbedtls_mpi_inv_mod T
-mbedtls_mpi_is_prime T
 mbedtls_mpi_is_prime_ext T
 mbedtls_mpi_lsb T
 mbedtls_mpi_lset T
@@ -395,6 +459,13 @@ mbedtls_mpi_write_binary T
 mbedtls_mpi_write_binary_le T
 mbedtls_mpi_write_file T
 mbedtls_mpi_write_string T
+mbedtls_mps_reader_commit T
+mbedtls_mps_reader_feed T
+mbedtls_mps_reader_free T
+mbedtls_mps_reader_get T
+mbedtls_mps_reader_init T
+mbedtls_mps_reader_reclaim T
+mbedtls_ms_time T
 mbedtls_net_accept T
 mbedtls_net_bind T
 mbedtls_net_close T
@@ -408,15 +479,24 @@ mbedtls_net_send T
 mbedtls_net_set_block T
 mbedtls_net_set_nonblock T
 mbedtls_net_usleep T
+mbedtls_nist_kw_free T
+mbedtls_nist_kw_init T
+mbedtls_nist_kw_self_test T
+mbedtls_nist_kw_setkey T
+mbedtls_nist_kw_unwrap T
+mbedtls_nist_kw_wrap T
+mbedtls_oid_from_numeric_string T
 mbedtls_oid_get_attr_short_name T
 mbedtls_oid_get_certificate_policies T
 mbedtls_oid_get_cipher_alg T
 mbedtls_oid_get_ec_grp T
+mbedtls_oid_get_ec_grp_algid T
 mbedtls_oid_get_extended_key_usage T
 mbedtls_oid_get_md_alg T
 mbedtls_oid_get_md_hmac T
 mbedtls_oid_get_numeric_string T
 mbedtls_oid_get_oid_by_ec_grp T
+mbedtls_oid_get_oid_by_ec_grp_algid T
 mbedtls_oid_get_oid_by_md T
 mbedtls_oid_get_oid_by_pk_alg T
 mbedtls_oid_get_oid_by_sig_alg T
@@ -431,13 +511,21 @@ mbedtls_pem_read_buffer T
 mbedtls_pem_write_buffer T
 mbedtls_pk_can_do T
 mbedtls_pk_check_pair T
+mbedtls_pk_copy_from_psa T
+mbedtls_pk_copy_public_from_psa T
 mbedtls_pk_debug T
 mbedtls_pk_decrypt T
+mbedtls_pk_ecc_set_group T
+mbedtls_pk_ecc_set_key T
+mbedtls_pk_ecc_set_pubkey T
+mbedtls_pk_ecc_set_pubkey_from_prv T
 mbedtls_pk_encrypt T
 mbedtls_pk_free T
 mbedtls_pk_get_bitlen T
 mbedtls_pk_get_name T
+mbedtls_pk_get_psa_attributes T
 mbedtls_pk_get_type T
+mbedtls_pk_import_into_psa T
 mbedtls_pk_info_from_type T
 mbedtls_pk_init T
 mbedtls_pk_load_file T
@@ -449,6 +537,7 @@ mbedtls_pk_parse_subpubkey T
 mbedtls_pk_setup T
 mbedtls_pk_setup_rsa_alt T
 mbedtls_pk_sign T
+mbedtls_pk_sign_ext T
 mbedtls_pk_sign_restartable T
 mbedtls_pk_verify T
 mbedtls_pk_verify_ext T
@@ -460,10 +549,17 @@ mbedtls_pk_write_pubkey_der T
 mbedtls_pk_write_pubkey_pem T
 mbedtls_pkcs12_derivation T
 mbedtls_pkcs12_pbe T
-mbedtls_pkcs12_pbe_sha1_rc4_128 T
+mbedtls_pkcs12_pbe_ext T
 mbedtls_pkcs5_pbes2 T
+mbedtls_pkcs5_pbes2_ext T
 mbedtls_pkcs5_pbkdf2_hmac T
+mbedtls_pkcs5_pbkdf2_hmac_ext T
 mbedtls_pkcs5_self_test T
+mbedtls_pkcs7_free T
+mbedtls_pkcs7_init T
+mbedtls_pkcs7_parse_der T
+mbedtls_pkcs7_signed_data_verify T
+mbedtls_pkcs7_signed_hash_verify T
 mbedtls_platform_entropy_poll T
 mbedtls_platform_gmtime_r T
 mbedtls_platform_setup T
@@ -476,8 +572,18 @@ mbedtls_poly1305_mac T
 mbedtls_poly1305_self_test T
 mbedtls_poly1305_starts T
 mbedtls_poly1305_update T
+mbedtls_psa_aead_abort T
 mbedtls_psa_aead_decrypt T
+mbedtls_psa_aead_decrypt_setup T
 mbedtls_psa_aead_encrypt T
+mbedtls_psa_aead_encrypt_setup T
+mbedtls_psa_aead_finish T
+mbedtls_psa_aead_set_lengths T
+mbedtls_psa_aead_set_nonce T
+mbedtls_psa_aead_update T
+mbedtls_psa_aead_update_ad T
+mbedtls_psa_asymmetric_decrypt T
+mbedtls_psa_asymmetric_encrypt T
 mbedtls_psa_cipher_abort T
 mbedtls_psa_cipher_decrypt T
 mbedtls_psa_cipher_decrypt_setup T
@@ -494,7 +600,13 @@ mbedtls_psa_ecp_export_key T
 mbedtls_psa_ecp_export_public_key T
 mbedtls_psa_ecp_generate_key T
 mbedtls_psa_ecp_import_key T
+mbedtls_psa_ecp_load_public_part T
 mbedtls_psa_ecp_load_representation T
+mbedtls_psa_ffdh_export_public_key T
+mbedtls_psa_ffdh_generate_key T
+mbedtls_psa_ffdh_import_key T
+mbedtls_psa_ffdh_key_agreement T
+mbedtls_psa_get_random T
 mbedtls_psa_get_stats T
 mbedtls_psa_hash_abort T
 mbedtls_psa_hash_clone T
@@ -502,6 +614,8 @@ mbedtls_psa_hash_compute T
 mbedtls_psa_hash_finish T
 mbedtls_psa_hash_setup T
 mbedtls_psa_hash_update T
+mbedtls_psa_interruptible_set_max_ops T
+mbedtls_psa_key_agreement_ecdh T
 mbedtls_psa_mac_abort T
 mbedtls_psa_mac_compute T
 mbedtls_psa_mac_sign_finish T
@@ -509,7 +623,11 @@ mbedtls_psa_mac_sign_setup T
 mbedtls_psa_mac_update T
 mbedtls_psa_mac_verify_finish T
 mbedtls_psa_mac_verify_setup T
-mbedtls_psa_random_state D 8
+mbedtls_psa_pake_abort T
+mbedtls_psa_pake_get_implicit_key T
+mbedtls_psa_pake_input T
+mbedtls_psa_pake_output T
+mbedtls_psa_pake_setup T
 mbedtls_psa_rsa_export_key T
 mbedtls_psa_rsa_export_public_key T
 mbedtls_psa_rsa_generate_key T
@@ -517,20 +635,22 @@ mbedtls_psa_rsa_import_key T
 mbedtls_psa_rsa_load_representation T
 mbedtls_psa_rsa_sign_hash T
 mbedtls_psa_rsa_verify_hash T
+mbedtls_psa_sign_hash_abort T
+mbedtls_psa_sign_hash_complete T
+mbedtls_psa_sign_hash_get_num_ops T
+mbedtls_psa_sign_hash_start T
+mbedtls_psa_verify_hash_abort T
+mbedtls_psa_verify_hash_complete T
+mbedtls_psa_verify_hash_get_num_ops T
+mbedtls_psa_verify_hash_start T
 mbedtls_ripemd160 T
 mbedtls_ripemd160_clone T
 mbedtls_ripemd160_finish T
-mbedtls_ripemd160_finish_ret T
 mbedtls_ripemd160_free T
-mbedtls_ripemd160_info D 16
 mbedtls_ripemd160_init T
-mbedtls_ripemd160_process T
-mbedtls_ripemd160_ret T
 mbedtls_ripemd160_self_test T
 mbedtls_ripemd160_starts T
-mbedtls_ripemd160_starts_ret T
 mbedtls_ripemd160_update T
-mbedtls_ripemd160_update_ret T
 mbedtls_rsa_alt_info D 96
 mbedtls_rsa_check_privkey T
 mbedtls_rsa_check_pub_priv T
@@ -545,11 +665,16 @@ mbedtls_rsa_export_crt T
 mbedtls_rsa_export_raw T
 mbedtls_rsa_free T
 mbedtls_rsa_gen_key T
+mbedtls_rsa_get_bitlen T
 mbedtls_rsa_get_len T
+mbedtls_rsa_get_md_alg T
+mbedtls_rsa_get_padding_mode T
 mbedtls_rsa_import T
 mbedtls_rsa_import_raw T
 mbedtls_rsa_info D 96
 mbedtls_rsa_init T
+mbedtls_rsa_parse_key T
+mbedtls_rsa_parse_pubkey T
 mbedtls_rsa_pkcs1_decrypt T
 mbedtls_rsa_pkcs1_encrypt T
 mbedtls_rsa_pkcs1_sign T
@@ -564,87 +689,81 @@ mbedtls_rsa_rsassa_pkcs1_v15_sign T
 mbedtls_rsa_rsassa_pkcs1_v15_verify T
 mbedtls_rsa_rsassa_pss_sign T
 mbedtls_rsa_rsassa_pss_sign_ext T
+mbedtls_rsa_rsassa_pss_sign_no_mode_check T
 mbedtls_rsa_rsassa_pss_verify T
 mbedtls_rsa_rsassa_pss_verify_ext T
 mbedtls_rsa_self_test T
 mbedtls_rsa_set_padding T
 mbedtls_rsa_validate_crt T
 mbedtls_rsa_validate_params T
-mbedtls_set_alarm T
+mbedtls_rsa_write_key T
+mbedtls_rsa_write_pubkey T
 mbedtls_sha1 T
 mbedtls_sha1_clone T
 mbedtls_sha1_finish T
-mbedtls_sha1_finish_ret T
 mbedtls_sha1_free T
-mbedtls_sha1_info D 16
 mbedtls_sha1_init T
-mbedtls_sha1_process T
-mbedtls_sha1_ret T
 mbedtls_sha1_self_test T
 mbedtls_sha1_starts T
-mbedtls_sha1_starts_ret T
 mbedtls_sha1_update T
-mbedtls_sha1_update_ret T
-mbedtls_sha224_info D 16
+mbedtls_sha224_self_test T
 mbedtls_sha256 T
 mbedtls_sha256_clone T
 mbedtls_sha256_finish T
-mbedtls_sha256_finish_ret T
 mbedtls_sha256_free T
-mbedtls_sha256_info D 16
 mbedtls_sha256_init T
-mbedtls_sha256_process T
-mbedtls_sha256_ret T
 mbedtls_sha256_self_test T
 mbedtls_sha256_starts T
-mbedtls_sha256_starts_ret T
 mbedtls_sha256_update T
-mbedtls_sha256_update_ret T
-mbedtls_sha384_info D 16
+mbedtls_sha3 T
+mbedtls_sha384_self_test T
+mbedtls_sha3_clone T
+mbedtls_sha3_finish T
+mbedtls_sha3_free T
+mbedtls_sha3_init T
+mbedtls_sha3_self_test T
+mbedtls_sha3_starts T
+mbedtls_sha3_update T
 mbedtls_sha512 T
 mbedtls_sha512_clone T
 mbedtls_sha512_finish T
-mbedtls_sha512_finish_ret T
 mbedtls_sha512_free T
-mbedtls_sha512_info D 16
 mbedtls_sha512_init T
-mbedtls_sha512_process T
-mbedtls_sha512_ret T
 mbedtls_sha512_self_test T
 mbedtls_sha512_starts T
-mbedtls_sha512_starts_ret T
 mbedtls_sha512_update T
-mbedtls_sha512_update_ret T
+mbedtls_ssl_add_hs_hdr_to_checksum T
+mbedtls_ssl_add_hs_msg_to_checksum T
 mbedtls_ssl_buffering_free T
 mbedtls_ssl_cache_free T
 mbedtls_ssl_cache_get T
 mbedtls_ssl_cache_init T
+mbedtls_ssl_cache_remove T
 mbedtls_ssl_cache_set T
 mbedtls_ssl_cache_set_max_entries T
 mbedtls_ssl_cache_set_timeout T
 mbedtls_ssl_check_cert_usage T
 mbedtls_ssl_check_curve T
+mbedtls_ssl_check_curve_tls_id T
 mbedtls_ssl_check_pending T
 mbedtls_ssl_check_record T
-mbedtls_ssl_check_sig_hash T
 mbedtls_ssl_check_timer T
+mbedtls_ssl_cipher_to_psa T
 mbedtls_ssl_ciphersuite_from_id T
 mbedtls_ssl_ciphersuite_from_string T
+mbedtls_ssl_ciphersuite_get_cipher_key_bitlen T
 mbedtls_ssl_ciphersuite_uses_ec T
 mbedtls_ssl_ciphersuite_uses_psk T
 mbedtls_ssl_close_notify T
 mbedtls_ssl_conf_alpn_protocols T
-mbedtls_ssl_conf_arc4_support T
 mbedtls_ssl_conf_authmode T
 mbedtls_ssl_conf_ca_chain T
-mbedtls_ssl_conf_cbc_record_splitting T
 mbedtls_ssl_conf_cert_profile T
 mbedtls_ssl_conf_cert_req_ca_list T
+mbedtls_ssl_conf_cid T
 mbedtls_ssl_conf_ciphersuites T
-mbedtls_ssl_conf_ciphersuites_for_version T
 mbedtls_ssl_conf_curves T
 mbedtls_ssl_conf_dbg T
-mbedtls_ssl_conf_dh_param T
 mbedtls_ssl_conf_dh_param_bin T
 mbedtls_ssl_conf_dh_param_ctx T
 mbedtls_ssl_conf_dhm_min_bitlen T
@@ -653,16 +772,17 @@ mbedtls_ssl_conf_dtls_badmac_limit T
 mbedtls_ssl_conf_dtls_cookies T
 mbedtls_ssl_conf_encrypt_then_mac T
 mbedtls_ssl_conf_endpoint T
-mbedtls_ssl_conf_export_keys_cb T
-mbedtls_ssl_conf_export_keys_ext_cb T
 mbedtls_ssl_conf_extended_master_secret T
-mbedtls_ssl_conf_fallback T
+mbedtls_ssl_conf_groups T
 mbedtls_ssl_conf_handshake_timeout T
+mbedtls_ssl_conf_has_static_psk T
 mbedtls_ssl_conf_legacy_renegotiation T
 mbedtls_ssl_conf_max_frag_len T
 mbedtls_ssl_conf_max_version T
 mbedtls_ssl_conf_min_version T
+mbedtls_ssl_conf_new_session_tickets T
 mbedtls_ssl_conf_own_cert T
+mbedtls_ssl_conf_preference_order T
 mbedtls_ssl_conf_psk T
 mbedtls_ssl_conf_psk_cb T
 mbedtls_ssl_conf_read_timeout T
@@ -673,10 +793,12 @@ mbedtls_ssl_conf_rng T
 mbedtls_ssl_conf_session_cache T
 mbedtls_ssl_conf_session_tickets T
 mbedtls_ssl_conf_session_tickets_cb T
+mbedtls_ssl_conf_sig_algs T
 mbedtls_ssl_conf_sig_hashes T
 mbedtls_ssl_conf_sni T
+mbedtls_ssl_conf_tls13_enable_signal_new_session_tickets T
+mbedtls_ssl_conf_tls13_key_exchange_modes T
 mbedtls_ssl_conf_transport T
-mbedtls_ssl_conf_truncated_hmac T
 mbedtls_ssl_conf_verify T
 mbedtls_ssl_config_defaults T
 mbedtls_ssl_config_free T
@@ -695,7 +817,9 @@ mbedtls_ssl_dtls_replay_check T
 mbedtls_ssl_dtls_replay_reset T
 mbedtls_ssl_dtls_replay_update T
 mbedtls_ssl_encrypt_buf T
+mbedtls_ssl_export_keying_material T
 mbedtls_ssl_fetch_input T
+mbedtls_ssl_finish_handshake_msg T
 mbedtls_ssl_flight_free T
 mbedtls_ssl_flight_transmit T
 mbedtls_ssl_flush_output T
@@ -704,23 +828,37 @@ mbedtls_ssl_get_alpn_protocol T
 mbedtls_ssl_get_bytes_avail T
 mbedtls_ssl_get_ciphersuite T
 mbedtls_ssl_get_ciphersuite_id T
+mbedtls_ssl_get_ciphersuite_id_from_ssl T
 mbedtls_ssl_get_ciphersuite_name T
 mbedtls_ssl_get_ciphersuite_sig_alg T
 mbedtls_ssl_get_ciphersuite_sig_pk_alg T
 mbedtls_ssl_get_current_mtu T
+mbedtls_ssl_get_curve_name_from_tls_id T
+mbedtls_ssl_get_ecp_group_id_from_tls_id T
+mbedtls_ssl_get_extension_id T
+mbedtls_ssl_get_extension_mask T
+mbedtls_ssl_get_extension_name T
+mbedtls_ssl_get_handshake_transcript T
+mbedtls_ssl_get_hostname_pointer T
+mbedtls_ssl_get_hs_sni T
 mbedtls_ssl_get_input_max_frag_len T
-mbedtls_ssl_get_key_exchange_md_ssl_tls T
 mbedtls_ssl_get_key_exchange_md_tls1_2 T
-mbedtls_ssl_get_max_frag_len T
+mbedtls_ssl_get_max_in_record_payload T
 mbedtls_ssl_get_max_out_record_payload T
+mbedtls_ssl_get_mode_from_ciphersuite T
+mbedtls_ssl_get_mode_from_transform T
 mbedtls_ssl_get_output_max_frag_len T
+mbedtls_ssl_get_own_cid T
 mbedtls_ssl_get_peer_cert T
+mbedtls_ssl_get_peer_cid T
+mbedtls_ssl_get_psa_curve_info_from_tls_id T
 mbedtls_ssl_get_record_expansion T
 mbedtls_ssl_get_session T
-mbedtls_ssl_get_session_pointer T
+mbedtls_ssl_get_tls_id_from_ecp_group_id T
 mbedtls_ssl_get_verify_result T
 mbedtls_ssl_get_version T
 mbedtls_ssl_handle_message_type T
+mbedtls_ssl_handle_pending_alert T
 mbedtls_ssl_handshake T
 mbedtls_ssl_handshake_client_step T
 mbedtls_ssl_handshake_free T
@@ -730,14 +868,24 @@ mbedtls_ssl_handshake_wrapup T
 mbedtls_ssl_handshake_wrapup_free_hs_transform T
 mbedtls_ssl_hash_from_md_alg T
 mbedtls_ssl_init T
+mbedtls_ssl_key_export_type_str T
 mbedtls_ssl_list_ciphersuites T
 mbedtls_ssl_md_alg_from_hash T
+mbedtls_ssl_named_group_to_str T
 mbedtls_ssl_optimize_checksum T
+mbedtls_ssl_parse_alpn_ext T
 mbedtls_ssl_parse_certificate T
 mbedtls_ssl_parse_change_cipher_spec T
 mbedtls_ssl_parse_finished T
+mbedtls_ssl_parse_server_name_ext T
+mbedtls_ssl_parse_sig_alg_ext T
+mbedtls_ssl_pend_fatal_alert T
 mbedtls_ssl_pk_alg_from_sig T
 mbedtls_ssl_prepare_handshake_record T
+mbedtls_ssl_print_extension T
+mbedtls_ssl_print_extensions T
+mbedtls_ssl_print_ticket_flags T
+mbedtls_ssl_protocol_version_str T
 mbedtls_ssl_psk_derive_premaster T
 mbedtls_ssl_read T
 mbedtls_ssl_read_record T
@@ -747,7 +895,9 @@ mbedtls_ssl_renegotiate T
 mbedtls_ssl_resend T
 mbedtls_ssl_resend_hello_request T
 mbedtls_ssl_reset_checksum T
-mbedtls_ssl_reset_in_out_pointers T
+mbedtls_ssl_reset_in_pointers T
+mbedtls_ssl_reset_out_pointers T
+mbedtls_ssl_reset_transcript_for_hrr T
 mbedtls_ssl_send_alert_message T
 mbedtls_ssl_send_fatal_handshake_failure T
 mbedtls_ssl_send_flight_completed T
@@ -757,193 +907,107 @@ mbedtls_ssl_session_init T
 mbedtls_ssl_session_load T
 mbedtls_ssl_session_reset T
 mbedtls_ssl_session_reset_int T
+mbedtls_ssl_session_reset_msg_layer T
 mbedtls_ssl_session_save T
+mbedtls_ssl_session_set_hostname T
 mbedtls_ssl_set_bio T
 mbedtls_ssl_set_calc_verify_md T
+mbedtls_ssl_set_cid T
 mbedtls_ssl_set_client_transport_id T
 mbedtls_ssl_set_datagram_packing T
+mbedtls_ssl_set_export_keys_cb T
 mbedtls_ssl_set_hostname T
 mbedtls_ssl_set_hs_authmode T
 mbedtls_ssl_set_hs_ca_chain T
+mbedtls_ssl_set_hs_dn_hints T
 mbedtls_ssl_set_hs_own_cert T
 mbedtls_ssl_set_hs_psk T
+mbedtls_ssl_set_inbound_transform T
 mbedtls_ssl_set_mtu T
+mbedtls_ssl_set_outbound_transform T
 mbedtls_ssl_set_session T
 mbedtls_ssl_set_timer T
 mbedtls_ssl_set_timer_cb T
 mbedtls_ssl_set_verify T
 mbedtls_ssl_setup T
+mbedtls_ssl_sig_alg_to_str T
 mbedtls_ssl_sig_from_pk T
 mbedtls_ssl_sig_from_pk_alg T
-mbedtls_ssl_sig_hash_set_add T
-mbedtls_ssl_sig_hash_set_const_hash T
-mbedtls_ssl_sig_hash_set_find T
+mbedtls_ssl_start_handshake_msg T
 mbedtls_ssl_start_renegotiation T
+mbedtls_ssl_states_str T
 mbedtls_ssl_ticket_free T
 mbedtls_ssl_ticket_init T
 mbedtls_ssl_ticket_parse T
+mbedtls_ssl_ticket_rotate T
 mbedtls_ssl_ticket_setup T
 mbedtls_ssl_ticket_write T
+mbedtls_ssl_tls12_get_preferred_hash_for_sig_alg T
+mbedtls_ssl_tls12_write_client_hello_exts T
+mbedtls_ssl_tls13_calculate_verify_data T
+mbedtls_ssl_tls13_check_received_extension T
+mbedtls_ssl_tls13_check_sig_alg_cert_key_match T
+mbedtls_ssl_tls13_compute_application_transform T
+mbedtls_ssl_tls13_compute_handshake_transform T
+mbedtls_ssl_tls13_compute_resumption_master_secret T
+mbedtls_ssl_tls13_create_psk_binder T
+mbedtls_ssl_tls13_crypto_init T
+mbedtls_ssl_tls13_derive_application_secrets T
+mbedtls_ssl_tls13_derive_early_secrets T
+mbedtls_ssl_tls13_derive_handshake_secrets T
+mbedtls_ssl_tls13_derive_resumption_master_secret T
+mbedtls_ssl_tls13_derive_secret T
+mbedtls_ssl_tls13_evolve_secret T
+mbedtls_ssl_tls13_export_handshake_psk T
+mbedtls_ssl_tls13_exporter T
+mbedtls_ssl_tls13_fetch_handshake_msg T
+mbedtls_ssl_tls13_finalize_client_hello T
+mbedtls_ssl_tls13_generate_and_write_xxdh_key_exchange T
+mbedtls_ssl_tls13_handshake_client_step T
+mbedtls_ssl_tls13_handshake_server_step T
+mbedtls_ssl_tls13_handshake_wrapup T
+mbedtls_ssl_tls13_hello_retry_request_magic R 32
+mbedtls_ssl_tls13_hkdf_expand_label T
+mbedtls_ssl_tls13_is_supported_versions_ext_present_in_exts T
+mbedtls_ssl_tls13_key_schedule_stage_early T
+mbedtls_ssl_tls13_labels R 237
+mbedtls_ssl_tls13_make_traffic_keys T
+mbedtls_ssl_tls13_populate_transform T
+mbedtls_ssl_tls13_process_certificate T
+mbedtls_ssl_tls13_process_certificate_verify T
+mbedtls_ssl_tls13_process_finished_message T
+mbedtls_ssl_tls13_read_public_xxdhe_share T
+mbedtls_ssl_tls13_write_binders_of_pre_shared_key_ext T
+mbedtls_ssl_tls13_write_certificate T
+mbedtls_ssl_tls13_write_certificate_verify T
+mbedtls_ssl_tls13_write_change_cipher_spec T
+mbedtls_ssl_tls13_write_client_hello_exts T
+mbedtls_ssl_tls13_write_finished_message T
+mbedtls_ssl_tls13_write_identities_of_pre_shared_key_ext T
 mbedtls_ssl_tls_prf T
 mbedtls_ssl_transform_free T
 mbedtls_ssl_transform_init T
 mbedtls_ssl_update_handshake_status T
 mbedtls_ssl_update_in_pointers T
 mbedtls_ssl_update_out_pointers T
+mbedtls_ssl_validate_ciphersuite T
+mbedtls_ssl_verify_certificate T
 mbedtls_ssl_write T
+mbedtls_ssl_write_alpn_ext T
 mbedtls_ssl_write_certificate T
 mbedtls_ssl_write_change_cipher_spec T
+mbedtls_ssl_write_client_hello T
 mbedtls_ssl_write_finished T
-mbedtls_ssl_write_handshake_msg T
+mbedtls_ssl_write_handshake_msg_ext T
 mbedtls_ssl_write_record T
+mbedtls_ssl_write_sig_alg_ext T
 mbedtls_ssl_write_version T
 mbedtls_strerror T
-mbedtls_test_ca_crt D 8
-mbedtls_test_ca_crt_ec R 775
-mbedtls_test_ca_crt_ec_der R 520
-mbedtls_test_ca_crt_ec_der_len R 8
-mbedtls_test_ca_crt_ec_len R 8
-mbedtls_test_ca_crt_ec_pem R 775
-mbedtls_test_ca_crt_ec_pem_len R 8
-mbedtls_test_ca_crt_len R 8
-mbedtls_test_ca_crt_rsa R 1209
-mbedtls_test_ca_crt_rsa_len R 8
-mbedtls_test_ca_crt_rsa_sha1 R 1209
-mbedtls_test_ca_crt_rsa_sha1_der R 837
-mbedtls_test_ca_crt_rsa_sha1_der_len R 8
-mbedtls_test_ca_crt_rsa_sha1_len R 8
-mbedtls_test_ca_crt_rsa_sha1_pem R 1209
-mbedtls_test_ca_crt_rsa_sha1_pem_len R 8
-mbedtls_test_ca_crt_rsa_sha256 R 1209
-mbedtls_test_ca_crt_rsa_sha256_der R 837
-mbedtls_test_ca_crt_rsa_sha256_der_len R 8
-mbedtls_test_ca_crt_rsa_sha256_len R 8
-mbedtls_test_ca_crt_rsa_sha256_pem R 1209
-mbedtls_test_ca_crt_rsa_sha256_pem_len R 8
-mbedtls_test_ca_key D 8
-mbedtls_test_ca_key_ec R 362
-mbedtls_test_ca_key_ec_der R 167
-mbedtls_test_ca_key_ec_der_len R 8
-mbedtls_test_ca_key_ec_len R 8
-mbedtls_test_ca_key_ec_pem R 362
-mbedtls_test_ca_key_ec_pem_len R 8
-mbedtls_test_ca_key_len R 8
-mbedtls_test_ca_key_rsa R 1782
-mbedtls_test_ca_key_rsa_der R 1192
-mbedtls_test_ca_key_rsa_der_len R 8
-mbedtls_test_ca_key_rsa_len R 8
-mbedtls_test_ca_key_rsa_pem R 1782
-mbedtls_test_ca_key_rsa_pem_len R 8
-mbedtls_test_ca_pwd D 8
-mbedtls_test_ca_pwd_ec R 13
-mbedtls_test_ca_pwd_ec_der_len R 8
-mbedtls_test_ca_pwd_ec_len R 8
-mbedtls_test_ca_pwd_ec_pem R 13
-mbedtls_test_ca_pwd_ec_pem_len R 8
-mbedtls_test_ca_pwd_len R 8
-mbedtls_test_ca_pwd_rsa R 13
-mbedtls_test_ca_pwd_rsa_der_len R 8
-mbedtls_test_ca_pwd_rsa_len R 8
-mbedtls_test_ca_pwd_rsa_pem R 13
-mbedtls_test_ca_pwd_rsa_pem_len R 8
-mbedtls_test_cas D 32
-mbedtls_test_cas_der D 32
-mbedtls_test_cas_der_len R 32
-mbedtls_test_cas_len R 32
-mbedtls_test_cas_pem R 3191
-mbedtls_test_cas_pem_len R 8
-mbedtls_test_cli_crt D 8
-mbedtls_test_cli_crt_ec R 723
-mbedtls_test_cli_crt_ec_der R 483
-mbedtls_test_cli_crt_ec_der_len R 8
-mbedtls_test_cli_crt_ec_len R 8
-mbedtls_test_cli_crt_ec_pem R 723
-mbedtls_test_cli_crt_ec_pem_len R 8
-mbedtls_test_cli_crt_len R 8
-mbedtls_test_cli_crt_rsa R 1209
-mbedtls_test_cli_crt_rsa_der R 835
-mbedtls_test_cli_crt_rsa_der_len R 8
-mbedtls_test_cli_crt_rsa_len R 8
-mbedtls_test_cli_crt_rsa_pem R 1209
-mbedtls_test_cli_crt_rsa_pem_len R 8
-mbedtls_test_cli_key D 8
-mbedtls_test_cli_key_ec R 233
-mbedtls_test_cli_key_ec_der R 121
-mbedtls_test_cli_key_ec_der_len R 8
-mbedtls_test_cli_key_ec_len R 8
-mbedtls_test_cli_key_ec_pem R 233
-mbedtls_test_cli_key_ec_pem_len R 8
-mbedtls_test_cli_key_len R 8
-mbedtls_test_cli_key_rsa R 1707
-mbedtls_test_cli_key_rsa_der R 1192
-mbedtls_test_cli_key_rsa_der_len R 8
-mbedtls_test_cli_key_rsa_len R 8
-mbedtls_test_cli_key_rsa_pem R 1707
-mbedtls_test_cli_key_rsa_pem_len R 8
-mbedtls_test_cli_pwd D 8
-mbedtls_test_cli_pwd_ec R 1
-mbedtls_test_cli_pwd_ec_len R 8
-mbedtls_test_cli_pwd_ec_pem R 1
-mbedtls_test_cli_pwd_ec_pem_len R 8
-mbedtls_test_cli_pwd_len R 8
-mbedtls_test_cli_pwd_rsa R 1
-mbedtls_test_cli_pwd_rsa_len R 8
-mbedtls_test_cli_pwd_rsa_pem R 1
-mbedtls_test_cli_pwd_rsa_pem_len R 8
-mbedtls_test_srv_crt D 8
-mbedtls_test_srv_crt_ec R 813
-mbedtls_test_srv_crt_ec_der R 547
-mbedtls_test_srv_crt_ec_der_len R 8
-mbedtls_test_srv_crt_ec_len R 8
-mbedtls_test_srv_crt_ec_pem R 813
-mbedtls_test_srv_crt_ec_pem_len R 8
-mbedtls_test_srv_crt_len R 8
-mbedtls_test_srv_crt_rsa R 1197
-mbedtls_test_srv_crt_rsa_len R 8
-mbedtls_test_srv_crt_rsa_sha1 R 1197
-mbedtls_test_srv_crt_rsa_sha1_der R 827
-mbedtls_test_srv_crt_rsa_sha1_der_len R 8
-mbedtls_test_srv_crt_rsa_sha1_len R 8
-mbedtls_test_srv_crt_rsa_sha1_pem R 1197
-mbedtls_test_srv_crt_rsa_sha1_pem_len R 8
-mbedtls_test_srv_crt_rsa_sha256 R 1197
-mbedtls_test_srv_crt_rsa_sha256_der R 827
-mbedtls_test_srv_crt_rsa_sha256_der_len R 8
-mbedtls_test_srv_crt_rsa_sha256_len R 8
-mbedtls_test_srv_crt_rsa_sha256_pem R 1197
-mbedtls_test_srv_crt_rsa_sha256_pem_len R 8
-mbedtls_test_srv_key D 8
-mbedtls_test_srv_key_ec R 233
-mbedtls_test_srv_key_ec_der R 121
-mbedtls_test_srv_key_ec_der_len R 8
-mbedtls_test_srv_key_ec_len R 8
-mbedtls_test_srv_key_ec_pem R 233
-mbedtls_test_srv_key_ec_pem_len R 8
-mbedtls_test_srv_key_len R 8
-mbedtls_test_srv_key_rsa R 1707
-mbedtls_test_srv_key_rsa_der R 1192
-mbedtls_test_srv_key_rsa_der_len R 8
-mbedtls_test_srv_key_rsa_len R 8
-mbedtls_test_srv_key_rsa_pem R 1707
-mbedtls_test_srv_key_rsa_pem_len R 8
-mbedtls_test_srv_pwd D 8
-mbedtls_test_srv_pwd_ec R 1
-mbedtls_test_srv_pwd_ec_der_len R 8
-mbedtls_test_srv_pwd_ec_len R 8
-mbedtls_test_srv_pwd_ec_pem R 1
-mbedtls_test_srv_pwd_ec_pem_len R 8
-mbedtls_test_srv_pwd_len R 8
-mbedtls_test_srv_pwd_rsa R 1
-mbedtls_test_srv_pwd_rsa_der_len R 8
-mbedtls_test_srv_pwd_rsa_len R 8
-mbedtls_test_srv_pwd_rsa_pem R 1
-mbedtls_test_srv_pwd_rsa_pem_len R 8
-mbedtls_timing_alarmed B 4
 mbedtls_timing_get_delay T
+mbedtls_timing_get_final_delay T
 mbedtls_timing_get_timer T
-mbedtls_timing_hardclock T
-mbedtls_timing_self_test T
 mbedtls_timing_set_delay T
+mbedtls_tls_prf_types_str T
 mbedtls_to_psa_error T
 mbedtls_version_check_feature T
 mbedtls_version_get_number T
@@ -958,10 +1022,12 @@ mbedtls_x509_crl_parse_file T
 mbedtls_x509_crt_check_extended_key_usage T
 mbedtls_x509_crt_check_key_usage T
 mbedtls_x509_crt_free T
+mbedtls_x509_crt_get_ca_istrue T
 mbedtls_x509_crt_info T
 mbedtls_x509_crt_init T
 mbedtls_x509_crt_is_revoked T
 mbedtls_x509_crt_parse T
+mbedtls_x509_crt_parse_cn_inet_pton T
 mbedtls_x509_crt_parse_der T
 mbedtls_x509_crt_parse_der_nocopy T
 mbedtls_x509_crt_parse_der_with_ext_cb T
@@ -969,6 +1035,7 @@ mbedtls_x509_crt_parse_file T
 mbedtls_x509_crt_parse_path T
 mbedtls_x509_crt_profile_default R 16
 mbedtls_x509_crt_profile_next R 16
+mbedtls_x509_crt_profile_none R 16
 mbedtls_x509_crt_profile_suiteb R 16
 mbedtls_x509_crt_verify T
 mbedtls_x509_crt_verify_info T
@@ -979,28 +1046,39 @@ mbedtls_x509_csr_info T
 mbedtls_x509_csr_init T
 mbedtls_x509_csr_parse T
 mbedtls_x509_csr_parse_der T
+mbedtls_x509_csr_parse_der_with_ext_cb T
 mbedtls_x509_csr_parse_file T
 mbedtls_x509_dn_gets T
+mbedtls_x509_free_subject_alt_name T
 mbedtls_x509_get_alg T
 mbedtls_x509_get_alg_null T
 mbedtls_x509_get_ext T
+mbedtls_x509_get_key_usage T
 mbedtls_x509_get_name T
+mbedtls_x509_get_ns_cert_type T
 mbedtls_x509_get_rsassa_pss_params T
 mbedtls_x509_get_serial T
 mbedtls_x509_get_sig T
 mbedtls_x509_get_sig_alg T
+mbedtls_x509_get_subject_alt_name T
+mbedtls_x509_get_subject_alt_name_ext T
 mbedtls_x509_get_time T
+mbedtls_x509_info_cert_type T
+mbedtls_x509_info_key_usage T
+mbedtls_x509_info_subject_alt_name T
 mbedtls_x509_key_size_helper T
 mbedtls_x509_parse_subject_alt_name T
-mbedtls_x509_self_test T
 mbedtls_x509_serial_gets T
 mbedtls_x509_set_extension T
 mbedtls_x509_sig_alg_gets T
 mbedtls_x509_string_to_names T
+mbedtls_x509_time_cmp T
+mbedtls_x509_time_gmtime T
 mbedtls_x509_time_is_future T
 mbedtls_x509_time_is_past T
 mbedtls_x509_write_extensions T
 mbedtls_x509_write_names T
+mbedtls_x509_write_set_san_common T
 mbedtls_x509_write_sig T
 mbedtls_x509write_crt_der T
 mbedtls_x509write_crt_free T
@@ -1008,6 +1086,7 @@ mbedtls_x509write_crt_init T
 mbedtls_x509write_crt_pem T
 mbedtls_x509write_crt_set_authority_key_identifier T
 mbedtls_x509write_crt_set_basic_constraints T
+mbedtls_x509write_crt_set_ext_key_usage T
 mbedtls_x509write_crt_set_extension T
 mbedtls_x509write_crt_set_issuer_key T
 mbedtls_x509write_crt_set_issuer_name T
@@ -1015,6 +1094,8 @@ mbedtls_x509write_crt_set_key_usage T
 mbedtls_x509write_crt_set_md_alg T
 mbedtls_x509write_crt_set_ns_cert_type T
 mbedtls_x509write_crt_set_serial T
+mbedtls_x509write_crt_set_serial_raw T
+mbedtls_x509write_crt_set_subject_alternative_name T
 mbedtls_x509write_crt_set_subject_key T
 mbedtls_x509write_crt_set_subject_key_identifier T
 mbedtls_x509write_crt_set_subject_name T
@@ -1029,18 +1110,26 @@ mbedtls_x509write_csr_set_key T
 mbedtls_x509write_csr_set_key_usage T
 mbedtls_x509write_csr_set_md_alg T
 mbedtls_x509write_csr_set_ns_cert_type T
+mbedtls_x509write_csr_set_subject_alternative_name T
 mbedtls_x509write_csr_set_subject_name T
-mbedtls_xtea_crypt_cbc T
-mbedtls_xtea_crypt_ecb T
-mbedtls_xtea_free T
-mbedtls_xtea_init T
-mbedtls_xtea_self_test T
-mbedtls_xtea_setup T
+mbedtls_zeroize_and_free T
+psa_aead_abort T
 psa_aead_decrypt T
+psa_aead_decrypt_setup T
 psa_aead_encrypt T
+psa_aead_encrypt_setup T
+psa_aead_finish T
+psa_aead_generate_nonce T
+psa_aead_set_lengths T
+psa_aead_set_nonce T
+psa_aead_update T
+psa_aead_update_ad T
+psa_aead_verify T
 psa_allocate_buffer_to_slot T
 psa_asymmetric_decrypt T
 psa_asymmetric_encrypt T
+psa_can_do_cipher T
+psa_can_do_hash T
 psa_cipher_abort T
 psa_cipher_decrypt T
 psa_cipher_decrypt_setup T
@@ -1053,57 +1142,39 @@ psa_cipher_update T
 psa_close_key T
 psa_copy_key T
 psa_copy_key_material_into_slot T
+psa_crypto_driver_pake_get_cipher_suite T
+psa_crypto_driver_pake_get_password T
+psa_crypto_driver_pake_get_password_len T
+psa_crypto_driver_pake_get_peer T
+psa_crypto_driver_pake_get_peer_len T
+psa_crypto_driver_pake_get_user T
+psa_crypto_driver_pake_get_user_len T
 psa_crypto_init T
+psa_crypto_local_input_alloc T
+psa_crypto_local_input_free T
+psa_crypto_local_output_alloc T
+psa_crypto_local_output_free T
+psa_custom_key_parameters_are_default T
 psa_destroy_key T
 psa_destroy_persistent_key T
-psa_driver_wrapper_aead_decrypt T
-psa_driver_wrapper_aead_encrypt T
-psa_driver_wrapper_cipher_abort T
-psa_driver_wrapper_cipher_decrypt T
-psa_driver_wrapper_cipher_decrypt_setup T
-psa_driver_wrapper_cipher_encrypt T
-psa_driver_wrapper_cipher_encrypt_setup T
-psa_driver_wrapper_cipher_finish T
-psa_driver_wrapper_cipher_set_iv T
-psa_driver_wrapper_cipher_update T
-psa_driver_wrapper_export_key T
 psa_driver_wrapper_export_public_key T
-psa_driver_wrapper_free T
-psa_driver_wrapper_generate_key T
 psa_driver_wrapper_get_builtin_key T
 psa_driver_wrapper_get_key_buffer_size T
-psa_driver_wrapper_hash_abort T
-psa_driver_wrapper_hash_clone T
-psa_driver_wrapper_hash_compute T
-psa_driver_wrapper_hash_finish T
-psa_driver_wrapper_hash_setup T
-psa_driver_wrapper_hash_update T
-psa_driver_wrapper_import_key T
-psa_driver_wrapper_init T
-psa_driver_wrapper_mac_abort T
-psa_driver_wrapper_mac_compute T
-psa_driver_wrapper_mac_sign_finish T
-psa_driver_wrapper_mac_sign_setup T
-psa_driver_wrapper_mac_update T
-psa_driver_wrapper_mac_verify_finish T
-psa_driver_wrapper_mac_verify_setup T
-psa_driver_wrapper_sign_hash T
-psa_driver_wrapper_sign_message T
-psa_driver_wrapper_verify_hash T
-psa_driver_wrapper_verify_message T
 psa_export_key T
 psa_export_key_internal T
 psa_export_public_key T
 psa_export_public_key_internal T
 psa_format_key_data_for_storage T
+psa_free_key_slot T
 psa_free_persistent_key_data T
 psa_generate_key T
+psa_generate_key_custom T
+psa_generate_key_ext T
 psa_generate_key_internal T
 psa_generate_random T
+psa_generic_status_to_mbedtls T
 psa_get_and_lock_key_slot T
-psa_get_empty_key_slot T
 psa_get_key_attributes T
-psa_get_key_domain_parameters T
 psa_hash_abort T
 psa_hash_clone T
 psa_hash_compare T
@@ -1115,19 +1186,25 @@ psa_hash_verify T
 psa_import_key T
 psa_import_key_into_slot T
 psa_initialize_key_slots T
+psa_interruptible_get_max_ops T
+psa_interruptible_set_max_ops T
 psa_is_key_present_in_storage T
 psa_is_valid_key_id T
 psa_its_get T
 psa_its_get_info T
 psa_its_remove T
 psa_its_set T
+psa_key_agreement_raw_builtin T
 psa_key_derivation_abort T
 psa_key_derivation_get_capacity T
 psa_key_derivation_input_bytes T
+psa_key_derivation_input_integer T
 psa_key_derivation_input_key T
 psa_key_derivation_key_agreement T
 psa_key_derivation_output_bytes T
 psa_key_derivation_output_key T
+psa_key_derivation_output_key_custom T
+psa_key_derivation_output_key_ext T
 psa_key_derivation_set_capacity T
 psa_key_derivation_setup T
 psa_load_persistent_key T
@@ -1140,22 +1217,47 @@ psa_mac_verify T
 psa_mac_verify_finish T
 psa_mac_verify_setup T
 psa_open_key T
+psa_pake_abort T
+psa_pake_get_implicit_key T
+psa_pake_input T
+psa_pake_output T
+psa_pake_set_password_key T
+psa_pake_set_peer T
+psa_pake_set_role T
+psa_pake_set_user T
+psa_pake_setup T
 psa_parse_key_data_from_storage T
+psa_pk_status_to_mbedtls T
 psa_purge_key T
 psa_raw_key_agreement T
 psa_remove_key_data_from_memory T
+psa_reserve_free_key_slot T
 psa_reset_key_attributes T
 psa_save_persistent_key T
-psa_set_key_domain_parameters T
 psa_sign_hash T
+psa_sign_hash_abort T
 psa_sign_hash_builtin T
+psa_sign_hash_complete T
+psa_sign_hash_get_num_ops T
+psa_sign_hash_start T
 psa_sign_message T
 psa_sign_message_builtin T
-psa_unlock_key_slot T
+psa_status_to_mbedtls T
+psa_to_lms_errors R 12
+psa_to_md_errors R 16
+psa_to_pk_rsa_errors R 32
+psa_to_ssl_errors R 28
+psa_unregister_read T
+psa_unregister_read_under_mutex T
 psa_validate_key_location T
 psa_validate_key_persistence T
+psa_validate_unstructured_key_bit_size T
 psa_verify_hash T
+psa_verify_hash_abort T
 psa_verify_hash_builtin T
+psa_verify_hash_complete T
+psa_verify_hash_get_num_ops T
+psa_verify_hash_start T
 psa_verify_message T
 psa_verify_message_builtin T
 psa_wipe_all_key_slots T
