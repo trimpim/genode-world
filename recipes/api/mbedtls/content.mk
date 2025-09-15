@@ -8,11 +8,15 @@ $(MIRROR_FROM_REP_DIR):
 
 PORT_DIR := $(call port_dir,$(REP_DIR)/ports/mbedtls)
 
-content: include/mbedtls LICENSE
+content: include/mbedtls include/psa LICENSE
 
 include/mbedtls:
 	mkdir -p $@
 	cp -r $(PORT_DIR)/src/lib/mbedtls/include/mbedtls/* $@/
+
+include/psa:
+	mkdir -p $@
+	cp -r $(PORT_DIR)/src/lib/mbedtls/include/psa/* $@/
 
 LICENSE:
 	cp $(PORT_DIR)/src/lib/mbedtls/LICENSE $@
